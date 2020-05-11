@@ -1,6 +1,8 @@
 ## [The Module]
 
-Every big_project starts small. We are starting with a flat, unrecommended file structure just to show simple access to a module in a directory from a sibling test case. \[`test_module0.py`]
+Every project starts small. We are starting with a flat, unrecommended
+file structure just to show simple access to a module in a directory
+from a sibling test case. \[`test_module0.py`]
 
 There is nothing special with Python to statically (no runtime, dynamic alteration of the `sys.path`) access the imported module. If Pycharm couldn't find the import, it would have a red underline under it.  
 *Picture of red underline*
@@ -13,7 +15,7 @@ To better illustrate what is being added to `sys.path`, tests will print out the
 
 ```
 sys.path(1 paths):
-	/Users/greg/PycharmProjects/big_project
+	/Users/greg/PycharmProjects/the_project
 ```
 
 The print out is filtered to just show `sys.path` augmentation related to project; no system or site-package paths. \[run `test_module` and highlight `sys.path in output]
