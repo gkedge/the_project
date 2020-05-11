@@ -6,7 +6,7 @@ The 'reasoned' structure strives to achieve modularity goals, use sane importati
 
 Each lesson is a branch on this archive:
 
-- TheModule
+- [TheModule](./TheModule.md)
 - ThePackage
 - TheNamespacePackage
 - SrcDirectoryAndSysPath
