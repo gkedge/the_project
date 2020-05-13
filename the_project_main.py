@@ -1,4 +1,4 @@
-from the_project.module0 import Module0
+from the_project import Module0
 
 print("Execute The Project.")
 
