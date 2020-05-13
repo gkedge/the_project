@@ -7,7 +7,7 @@ The 'reasoned' structure strives to achieve modularity goals, use sane importati
 Each lesson is a branch on this archive:
 
 - [TheModule](./TheModule.md)
-- ThePackage
+- [ThePackage](./ThePackage.md)
 - TheNamespacePackage
 - SrcDirectoryAndSysPath
 - PytestSysPath

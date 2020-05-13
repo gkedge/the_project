@@ -3,7 +3,7 @@ import subprocess
 from enum import Enum, auto
 from typing import List
 
-TESTS: List[str] = ['test_module0.py', 'test_the_project_main.py']
+TESTS: List[str] = ['test_package.py', 'test_the_project_main.py']
 
 
 class TestType(Enum):
