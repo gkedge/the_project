@@ -1,5 +1,5 @@
 # Was import module0
-from the_project import utils
+from src.the_project import utils
 
 
 class Module0:

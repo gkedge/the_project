@@ -1,3 +1,9 @@
+import sys
+from pathlib import Path
+
+PROJECT_DIR = Path(__file__).parent
+sys.path.append(str(PROJECT_DIR / 'src'))
+
 from the_project.module0 import Module0
 
 print("Execute The Project.")
