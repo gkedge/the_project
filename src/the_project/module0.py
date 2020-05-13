@@ -1,5 +1,4 @@
-# Was import module0
-from src.the_project import utils
+from . import utils
 
 
 class Module0:
