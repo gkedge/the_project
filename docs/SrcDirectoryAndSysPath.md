@@ -1,6 +1,8 @@
 ## The Source Directory and sys.path
 [The Source Directory and `sys.path`]: #thesourcedirectoryandsyspath
 
+\[apply patch]
+
 There are very valid reasons to have a `src` directory within a project.
 Most of the reasons pertain to the development testing of packages
 intended for publication to PyPi. The definitive treatise on the topic
