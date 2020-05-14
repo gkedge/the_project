@@ -1,0 +1,65 @@
+Index: conftest.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- conftest.py	(revision 9088db944973e2af34d4e8cf8744dc3576e0b158)
++++ conftest.py	(date 1589462634707)
+@@ -1,14 +1,11 @@
+-import sys
+-from pathlib import Path
+-
+ import pytest
+ from runtime_syspath import print_syspath
+ 
+-PROJECT_DIR = Path(__file__).parent
+-sys.path.append(str(PROJECT_DIR / 'src'))
+-
+ # pylint: disable=import-error
+-from the_project.module0 import Module0
++from src.the_project.module0 import Module0
++
++# PROJECT_DIR = Path(__file__).parent
++# sys.path.append(str(PROJECT_DIR / 'src'))
+ 
+ # pylint: enable=import-error
+ 
+Index: the_project_main.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- the_project_main.py	(revision 9088db944973e2af34d4e8cf8744dc3576e0b158)
++++ the_project_main.py	(date 1589462634700)
+@@ -1,13 +1,10 @@
+-import sys
+-from pathlib import Path
+-
+-from runtime_syspath import print_syspath
+-
+-PROJECT_DIR = Path(__file__).parent
+-sys.path.append(str(PROJECT_DIR / 'src'))
++# PROJECT_DIR = Path(__file__).parent
++# sys.path.append(str(PROJECT_DIR / 'src'))
+ 
+ # pylint: disable=import-error
+-from the_project.module0 import Module0
++from runtime_syspath import print_syspath
++
++from src.the_project.module0 import Module0
+ 
+ # pylint: enable=import-error
+ 
+Index: test_package.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- test_package.py	(revision 9088db944973e2af34d4e8cf8744dc3576e0b158)
++++ test_package.py	(date 1589462634704)
+@@ -1,4 +1,4 @@
+-from the_project import Module0
++from src.the_project import Module0
+ 
+ 
+ def test_func0(fixture0: Module0):
