@@ -9,6 +9,9 @@ intended for publication to PyPi. The definitive treatise on the topic
 is covered in the oft referenced article on
 [Python Packaging: The Structure](https://blog.ionelmc.ro/2014/05/25/python-packaging/#the-structure)
 
+\[share]
+https://blog.ionelmc.ro/2014/05/25/python-packaging/#the-structure
+
 I am going to do something that falls under the category of *just
 because you can, doesn't mean...* \[See test_package.py]
 
