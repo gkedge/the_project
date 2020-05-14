@@ -1,7 +1,8 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Python pytest tests" type="CompoundRunConfigurationType">
-    <toRun name="the_project_main" type="PythonConfigurationType" />
+    <toRun name="pytest for test_the_project_main.test_the_project_main" type="tests" />
     <toRun name="test_all_the_tests_on_cli" type="PythonConfigurationType" />
+    <toRun name="pytest for test_package.test_func0" type="tests" />
     <method v="2" />
   </configuration>
 </component>
