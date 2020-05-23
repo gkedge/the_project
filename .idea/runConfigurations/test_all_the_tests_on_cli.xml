@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="test_all_the_tests_on_cli" type="PythonConfigurationType" factoryName="Python" singleton="false" nameIsGenerated="true">
     <module name="the_project" />
-    <option name="INTERPRETER_OPTIONS" value="" />
+    <option name="INTERPRETER_OPTIONS" value="-B" />
     <option name="PARENT_ENVS" value="true" />
     <envs>
       <env name="PYTHONUNBUFFERED" value="1" />
