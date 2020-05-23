@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="pytest for test_module0.test_func0" type="tests" factoryName="py.test" singleton="false" nameIsGenerated="true">
     <module name="the_project" />
-    <option name="INTERPRETER_OPTIONS" value="" />
+    <option name="INTERPRETER_OPTIONS" value="-B" />
     <option name="PARENT_ENVS" value="true" />
     <option name="SDK_HOME" value="" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
