@@ -1,4 +1,17 @@
-from the_project import Module0
+import sys
+from pathlib import Path
+
+from runtime_syspath import print_syspath
+
+PROJECT_DIR = Path(__file__).parent
+sys.path.append(str(PROJECT_DIR / 'src'))
+
+# pylint: disable=import-error
+from the_project import Module0  # noqa
+
+# pylint: enable=import-error
+
+print_syspath(sort=False)
 
 print("Execute The Project.")
 
