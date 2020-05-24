@@ -3,8 +3,8 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
---- test_package.py	(revision 97396ba187110b60419de35de897c463ffc3292b)
-+++ test_package.py	(date 1590289461196)
+--- test_package.py	(revision 001dc702d237b5bdf060782f21267eb48eeb6a48)
++++ test_package.py	(date 1590292836900)
 @@ -1,4 +1,4 @@
 -from the_project import Module0
 +from src.the_project import Module0
@@ -16,8 +16,8 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
---- .idea/the_project.iml	(revision 97396ba187110b60419de35de897c463ffc3292b)
-+++ .idea/the_project.iml	(date 1590287991441)
+--- .idea/the_project.iml	(revision 001dc702d237b5bdf060782f21267eb48eeb6a48)
++++ .idea/the_project.iml	(date 1590292836884)
 @@ -1,9 +1,7 @@
  <?xml version="1.0" encoding="UTF-8"?>
  <module type="PYTHON_MODULE" version="4">
@@ -29,37 +29,14 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
      <orderEntry type="inheritedJdk" />
      <orderEntry type="sourceFolder" forTests="false" />
    </component>
-@@ -13,4 +11,4 @@
-   <component name="TestRunnerService">
-     <option name="PROJECT_TEST_RUNNER" value="pytest" />
-   </component>
--</module>
-+</module>
-\ No newline at end of file
-Index: .idea/runConfigurations/test_the_project_main_reusable_func.xml
-IDEA additional info:
-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
-<+>UTF-8
-===================================================================
---- .idea/runConfigurations/test_the_project_main_reusable_func.xml	(revision 97396ba187110b60419de35de897c463ffc3292b)
-+++ .idea/runConfigurations/test_the_project_main_reusable_func.xml	(date 1590291021657)
-@@ -1,7 +1,7 @@
- <component name="ProjectRunConfigurationManager">
-   <configuration default="false" name="test_the_project_main_reusable_func" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
-     <module name="the_project" />
--    <option name="INTERPRETER_OPTIONS" value="-m pytest -B" />
-+    <option name="INTERPRETER_OPTIONS" value="-B -m pytest" />
-     <option name="PARENT_ENVS" value="true" />
-     <envs>
-       <env name="PYTHONUNBUFFERED" value="1" />
 Index: .idea/runConfigurations/Python_pytest_tests.xml
 IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
---- .idea/runConfigurations/Python_pytest_tests.xml	(revision 97396ba187110b60419de35de897c463ffc3292b)
-+++ .idea/runConfigurations/Python_pytest_tests.xml	(date 1590291610327)
-@@ -2,8 +2,6 @@
+--- .idea/runConfigurations/Python_pytest_tests.xml	(revision 001dc702d237b5bdf060782f21267eb48eeb6a48)
++++ .idea/runConfigurations/Python_pytest_tests.xml	(date 1590292836880)
+@@ -2,9 +2,7 @@
    <configuration default="false" name="Python pytest tests" type="CompoundRunConfigurationType">
      <toRun name="test_all_the_tests_on_cli" type="PythonConfigurationType" />
      <toRun name="run_the_project_main" type="PythonConfigurationType" />
@@ -68,29 +45,16 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
      <toRun name="test_package" type="PythonConfigurationType" />
      <method v="2" />
    </configuration>
-Index: .idea/runConfigurations/test_package.xml
-IDEA additional info:
-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
-<+>UTF-8
-===================================================================
---- .idea/runConfigurations/test_package.xml	(revision 97396ba187110b60419de35de897c463ffc3292b)
-+++ .idea/runConfigurations/test_package.xml	(date 1590291021655)
-@@ -1,7 +1,7 @@
- <component name="ProjectRunConfigurationManager">
-   <configuration default="false" name="test_package" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
-     <module name="the_project" />
--    <option name="INTERPRETER_OPTIONS" value="-m pytest -B" />
-+    <option name="INTERPRETER_OPTIONS" value="-B -m pytest" />
-     <option name="PARENT_ENVS" value="true" />
-     <envs>
-       <env name="PYTHONUNBUFFERED" value="1" />
+-</component>
+\ No newline at end of file
++</component>
 Index: test_all_the_tests_on_cli.py
 IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
---- test_all_the_tests_on_cli.py	(revision 97396ba187110b60419de35de897c463ffc3292b)
-+++ test_all_the_tests_on_cli.py	(date 1590289572574)
+--- test_all_the_tests_on_cli.py	(revision 001dc702d237b5bdf060782f21267eb48eeb6a48)
++++ test_all_the_tests_on_cli.py	(date 1590292836897)
 @@ -7,8 +7,8 @@
  TESTS: List[Path] = [
      Path('test_package.py'),
@@ -107,8 +71,8 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
---- src/run_the_project_main.py	(revision 97396ba187110b60419de35de897c463ffc3292b)
-+++ src/run_the_project_main.py	(date 1590289461191)
+--- src/run_the_project_main.py	(revision 001dc702d237b5bdf060782f21267eb48eeb6a48)
++++ src/run_the_project_main.py	(date 1590292836888)
 @@ -1,24 +1,10 @@
 -import sys
 -from pathlib import Path
@@ -140,8 +104,8 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
---- conftest.py	(revision 97396ba187110b60419de35de897c463ffc3292b)
-+++ conftest.py	(date 1590289315105)
+--- conftest.py	(revision 001dc702d237b5bdf060782f21267eb48eeb6a48)
++++ conftest.py	(date 1590292836890)
 @@ -1,22 +1,6 @@
 -import sys
 -from pathlib import Path
@@ -171,8 +135,8 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
---- test_the_project_main_reusable_func.py	(revision 97396ba187110b60419de35de897c463ffc3292b)
-+++ test_the_project_main_reusable_func.py	(date 1590289461193)
+--- test_the_project_main_reusable_func.py	(revision 001dc702d237b5bdf060782f21267eb48eeb6a48)
++++ test_the_project_main_reusable_func.py	(date 1590292836903)
 @@ -1,4 +1,4 @@
 -from run_the_project_main import reusable_function
 +from src.run_the_project_main import reusable_function
@@ -184,8 +148,8 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
---- .idea/runConfigurations/Pytest_tests.xml	(revision 97396ba187110b60419de35de897c463ffc3292b)
-+++ .idea/runConfigurations/Pytest_tests.xml	(date 1590290930812)
+--- .idea/runConfigurations/Pytest_tests.xml	(revision 001dc702d237b5bdf060782f21267eb48eeb6a48)
++++ .idea/runConfigurations/Pytest_tests.xml	(date 1590292836875)
 @@ -1,7 +1,6 @@
  <component name="ProjectRunConfigurationManager">
    <configuration default="false" name="Pytest tests" type="CompoundRunConfigurationType">
@@ -193,15 +157,16 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 -    <toRun name="pytest for test_the_project_main_reusable_func.test_the_project_main_reusable_func" type="tests" />
      <method v="2" />
    </configuration>
- </component>
+-</component>
 \ No newline at end of file
++</component>
 Index: run_the_project_main_reusable_func.py
 IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
---- run_the_project_main_reusable_func.py	(revision 97396ba187110b60419de35de897c463ffc3292b)
-+++ run_the_project_main_reusable_func.py	(date 1590289461187)
+--- run_the_project_main_reusable_func.py	(revision 001dc702d237b5bdf060782f21267eb48eeb6a48)
++++ run_the_project_main_reusable_func.py	(date 1590292836893)
 @@ -1,20 +1,4 @@
 -import sys
 -from pathlib import Path
