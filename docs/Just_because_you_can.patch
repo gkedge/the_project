@@ -3,62 +3,224 @@ IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
---- test_package.py	(revision b782fd9afdb91e3278222ea20137b5ca8ef48390)
-+++ test_package.py	(date 1590259462916)
+--- test_package.py	(revision 97396ba187110b60419de35de897c463ffc3292b)
++++ test_package.py	(date 1590289461196)
 @@ -1,4 +1,4 @@
 -from the_project import Module0
 +from src.the_project import Module0
  
  
  def test_func0(fixture0: Module0):
-Index: the_project_main.py
+Index: .idea/the_project.iml
 IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
---- the_project_main.py	(revision b782fd9afdb91e3278222ea20137b5ca8ef48390)
-+++ the_project_main.py	(date 1590259769304)
-@@ -1,13 +1,10 @@
+--- .idea/the_project.iml	(revision 97396ba187110b60419de35de897c463ffc3292b)
++++ .idea/the_project.iml	(date 1590287991441)
+@@ -1,9 +1,7 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <module type="PYTHON_MODULE" version="4">
+   <component name="NewModuleRootManager">
+-    <content url="file://$MODULE_DIR$">
+-      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+-    </content>
++    <content url="file://$MODULE_DIR$" />
+     <orderEntry type="inheritedJdk" />
+     <orderEntry type="sourceFolder" forTests="false" />
+   </component>
+@@ -13,4 +11,4 @@
+   <component name="TestRunnerService">
+     <option name="PROJECT_TEST_RUNNER" value="pytest" />
+   </component>
+-</module>
++</module>
+\ No newline at end of file
+Index: .idea/runConfigurations/test_the_project_main_reusable_func.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/runConfigurations/test_the_project_main_reusable_func.xml	(revision 97396ba187110b60419de35de897c463ffc3292b)
++++ .idea/runConfigurations/test_the_project_main_reusable_func.xml	(date 1590291021657)
+@@ -1,7 +1,7 @@
+ <component name="ProjectRunConfigurationManager">
+   <configuration default="false" name="test_the_project_main_reusable_func" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+     <module name="the_project" />
+-    <option name="INTERPRETER_OPTIONS" value="-m pytest -B" />
++    <option name="INTERPRETER_OPTIONS" value="-B -m pytest" />
+     <option name="PARENT_ENVS" value="true" />
+     <envs>
+       <env name="PYTHONUNBUFFERED" value="1" />
+Index: .idea/runConfigurations/Python_pytest_tests.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/runConfigurations/Python_pytest_tests.xml	(revision 97396ba187110b60419de35de897c463ffc3292b)
++++ .idea/runConfigurations/Python_pytest_tests.xml	(date 1590291610327)
+@@ -2,8 +2,6 @@
+   <configuration default="false" name="Python pytest tests" type="CompoundRunConfigurationType">
+     <toRun name="test_all_the_tests_on_cli" type="PythonConfigurationType" />
+     <toRun name="run_the_project_main" type="PythonConfigurationType" />
+-    <toRun name="run_the_project_main_reusable_func" type="PythonConfigurationType" />
+-    <toRun name="test_the_project_main_reusable_func" type="PythonConfigurationType" />
+     <toRun name="test_package" type="PythonConfigurationType" />
+     <method v="2" />
+   </configuration>
+Index: .idea/runConfigurations/test_package.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/runConfigurations/test_package.xml	(revision 97396ba187110b60419de35de897c463ffc3292b)
++++ .idea/runConfigurations/test_package.xml	(date 1590291021655)
+@@ -1,7 +1,7 @@
+ <component name="ProjectRunConfigurationManager">
+   <configuration default="false" name="test_package" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+     <module name="the_project" />
+-    <option name="INTERPRETER_OPTIONS" value="-m pytest -B" />
++    <option name="INTERPRETER_OPTIONS" value="-B -m pytest" />
+     <option name="PARENT_ENVS" value="true" />
+     <envs>
+       <env name="PYTHONUNBUFFERED" value="1" />
+Index: test_all_the_tests_on_cli.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- test_all_the_tests_on_cli.py	(revision 97396ba187110b60419de35de897c463ffc3292b)
++++ test_all_the_tests_on_cli.py	(date 1590289572574)
+@@ -7,8 +7,8 @@
+ TESTS: List[Path] = [
+     Path('test_package.py'),
+     Path('src/run_the_project_main.py'),
+-    Path('test_the_project_main_reusable_func.py'),
+-    Path('run_the_project_main_reusable_func.py')
++    # Path('test_the_project_main_reusable_func.py'),
++    # Path('run_the_project_main_reusable_func.py')
+ ]
+ 
+ 
+Index: src/run_the_project_main.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/run_the_project_main.py	(revision 97396ba187110b60419de35de897c463ffc3292b)
++++ src/run_the_project_main.py	(date 1590289461191)
+@@ -1,24 +1,10 @@
 -import sys
 -from pathlib import Path
 -
  from runtime_syspath import print_syspath
  
--PROJECT_DIR = Path(__file__).parent
--sys.path.append(str(PROJECT_DIR / 'src'))
+-if __name__ != "__main__":
+-    SRC_PATH = Path(__file__).parent
+-    SRC_DIR_STR = str(SRC_PATH.absolute())
+-    if SRC_DIR_STR not in sys.path:
+-        sys.path.append(SRC_DIR_STR)
+-        print_syspath(sort=False)
+-else:
+-    print_syspath(sort=False)
 -
- # pylint: disable=import-error
--from the_project import Module0  # noqa
-+from the_project import Module0
-+
-+# PROJECT_DIR = Path(__file__).parent
-+# sys.path.append(str(PROJECT_DIR / 'src'))
+-# pylint: disable=import-error
++print_syspath(sort=False)
  
- # pylint: enable=import-error
+ # Why is Pycharm being dumb here? Answered with a Q on __main__ tests below...
+ from the_project import Module0
+ 
+-# pylint: disable=import-error
+-
+ print("Execute The Project.")
+ 
  
 Index: conftest.py
 IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 <+>UTF-8
 ===================================================================
---- conftest.py	(revision b782fd9afdb91e3278222ea20137b5ca8ef48390)
-+++ conftest.py	(date 1590259769301)
-@@ -1,14 +1,11 @@
+--- conftest.py	(revision 97396ba187110b60419de35de897c463ffc3292b)
++++ conftest.py	(date 1590289315105)
+@@ -1,22 +1,6 @@
 -import sys
 -from pathlib import Path
 -
  import pytest
- from runtime_syspath import print_syspath
- 
--PROJECT_DIR = Path(__file__).parent
--sys.path.append(str(PROJECT_DIR / 'src'))
+-from runtime_syspath import print_syspath
 -
- # pylint: disable=import-error
--from the_project.module0 import Module0
-+from src.the_project.module0 import Module0
-+
-+# PROJECT_DIR = Path(__file__).parent
-+# sys.path.append(str(PROJECT_DIR / 'src'))
+-print_syspath(sort=False)
+-
+-PROJECT_PATH = Path(__file__).parent.absolute()
+-SRC_DIR_STR = str(PROJECT_PATH / 'src')
+-if SRC_DIR_STR not in sys.path:
+-    sys.path.append(SRC_DIR_STR)
+-    print_syspath(sort=False)
+-
+-# pylint: disable=import-error
+-from the_project import Module0
  
- # pylint: enable=import-error
+-
+-# pylint: enable=import-error
++from src.the_project import Module0
  
+ 
+ @pytest.fixture
+Index: test_the_project_main_reusable_func.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- test_the_project_main_reusable_func.py	(revision 97396ba187110b60419de35de897c463ffc3292b)
++++ test_the_project_main_reusable_func.py	(date 1590289461193)
+@@ -1,4 +1,4 @@
+-from run_the_project_main import reusable_function
++from src.run_the_project_main import reusable_function
+ 
+ 
+ def test_the_project_main_reusable_func():
+Index: .idea/runConfigurations/Pytest_tests.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/runConfigurations/Pytest_tests.xml	(revision 97396ba187110b60419de35de897c463ffc3292b)
++++ .idea/runConfigurations/Pytest_tests.xml	(date 1590290930812)
+@@ -1,7 +1,6 @@
+ <component name="ProjectRunConfigurationManager">
+   <configuration default="false" name="Pytest tests" type="CompoundRunConfigurationType">
+     <toRun name="pytest for test_package.test_func0" type="tests" />
+-    <toRun name="pytest for test_the_project_main_reusable_func.test_the_project_main_reusable_func" type="tests" />
+     <method v="2" />
+   </configuration>
+ </component>
+\ No newline at end of file
+Index: run_the_project_main_reusable_func.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- run_the_project_main_reusable_func.py	(revision 97396ba187110b60419de35de897c463ffc3292b)
++++ run_the_project_main_reusable_func.py	(date 1590289461187)
+@@ -1,20 +1,4 @@
+-import sys
+-from pathlib import Path
+-
+-from runtime_syspath import print_syspath
+-
+-print_syspath(sort=False)
+-
+-PROJECT_PATH = Path(__file__).parent.absolute()
+-SRC_DIR_STR = str(PROJECT_PATH / 'src')
+-if SRC_DIR_STR not in sys.path:
+-    sys.path.append(SRC_DIR_STR)
+-    print_syspath(sort=False)
+-
+-# pylint: disable=import-error
+-from run_the_project_main import reusable_function
+-
+-# pylint: enable=import-error
++from src.run_the_project_main import reusable_function
+ 
+ if __name__ == "__main__":
+     print(reusable_function())
