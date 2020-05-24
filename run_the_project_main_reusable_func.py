@@ -12,9 +12,9 @@ if SRC_DIR_STR not in sys.path:
     print_syspath(sort=False)
 
 # pylint: disable=import-error
-from run_the_project_main import reusable_function
+from run_the_project_main import main_reusable_func
 
 # pylint: enable=import-error
 
 if __name__ == "__main__":
-    print(reusable_function())
+    print(main_reusable_func())

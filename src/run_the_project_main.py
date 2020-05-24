@@ -23,11 +23,11 @@ print("Execute The Project.")
 
 
 # On your way down, here's a hint: the name of this function...
-def reusable_function():
+def main_reusable_func():
     the_prog_mod0: Module0 = Module0()
     return f'Exercise {the_prog_mod0.func0()} on class {the_prog_mod0}.'
 
 
 # What does this if-test do?
 if __name__ == "__main__":
-    print(reusable_function())
+    print(main_reusable_func())
