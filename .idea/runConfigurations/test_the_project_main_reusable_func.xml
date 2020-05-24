@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="test_the_project_main_reusable_func" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
     <module name="the_project" />
-    <option name="INTERPRETER_OPTIONS" value="-m pytest -B" />
+    <option name="INTERPRETER_OPTIONS" value="-B -m pytest" />
     <option name="PARENT_ENVS" value="true" />
     <envs>
       <env name="PYTHONUNBUFFERED" value="1" />
