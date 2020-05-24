@@ -7,7 +7,7 @@ from typing import List, Union, Sequence
 TESTS: List[Path] = [
     Path('test_module0.py'),
     Path('run_the_project_main.py'),
-    Path('test_the_project_main.py'),
+    Path('test_the_project_main_reusable_func.py'),
 ]
 
 
