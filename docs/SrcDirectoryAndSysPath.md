@@ -8,14 +8,19 @@ is covered in the oft referenced article on
 [Python Packaging: The Structure](https://blog.ionelmc.ro/2014/05/25/python-packaging/#the-structure)
 
 I am going to do something that falls under the category of *just
-because you can, doesn't mean...* \[See test_package.py]
+because you can, doesn't mean...*
+
+\[Apply Just_because_you_can.patch]
+
+\[See test_package.py]
+
 
 Pycharm isn't having a problem accessing `the_project` package. I can
 safely run all my tests. All this without a clear packaging path (the
-only packaging `__init__.py` is in `the_proeject` itself, not in the
-root directory and not in `src`. Why does that work?
+only packaging `__init__.py` is in `the_project` itself, not in the root
+directory and not in `src`. Why does that work?
 
-\[remove all the src namespaces]
+\[rollback]
 
 Subscribing to that `src` directory guidance, that guidance infers:
 * don't introduce a `__init_.py` to make `src` a package
@@ -31,8 +36,10 @@ For `pytest` test cases, the most natural location to add the `src`
 directory to the `sys.path` is to the `conftest.py`:  
 \[See conftest.py]
 ```
-PROJECT_DIR = Path(__file__).parent
-sys.path.append(str(PROJECT_DIR / 'src'))
+PROJECT_PATH = Path(__file__).parent
+SRC_DIR_STR = str(PROJECT_PATH / 'src')
+if SRC_DIR_STR not in sys.path:
+    sys.path.append(SRC_DIR_STR)
 ```
 Running a test, our `sys.path` report will show the addition:
 ```

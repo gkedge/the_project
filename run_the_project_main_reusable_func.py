@@ -1,7 +1,6 @@
 import sys
 from pathlib import Path
 
-import pytest
 from runtime_syspath import print_syspath
 
 print_syspath(sort=False)
@@ -13,12 +12,9 @@ if SRC_DIR_STR not in sys.path:
     print_syspath(sort=False)
 
 # pylint: disable=import-error
-from the_project import Module0
-
+from run_the_project_main import reusable_function
 
 # pylint: enable=import-error
 
-
-@pytest.fixture
-def fixture0() -> Module0:
-    return Module0()
+if __name__ == "__main__":
+    print(reusable_function())
