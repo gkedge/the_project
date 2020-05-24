@@ -1,9 +1,9 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Python pytest tests" type="CompoundRunConfigurationType">
+    <toRun name="test_the_project_main_reusable_func" type="PythonConfigurationType" />
     <toRun name="test_all_the_tests_on_cli" type="PythonConfigurationType" />
     <toRun name="run_the_project_main" type="PythonConfigurationType" />
     <toRun name="run_the_project_main_reusable_func" type="PythonConfigurationType" />
-    <toRun name="test_the_project_main_reusable_func" type="PythonConfigurationType" />
     <toRun name="test_package" type="PythonConfigurationType" />
     <method v="2" />
   </configuration>
