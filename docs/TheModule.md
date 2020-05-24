@@ -1,4 +1,5 @@
-## [The Module]
+## The Module
+[The Module]: #themodule
 
 Every project starts small. We are starting with a flat, unrecommended
 file structure just to show simple access to a module in a directory
@@ -61,4 +62,3 @@ command patterns via \[test_all_the_tests_on_cli.py] \[run
 >
 > A: Prolly not without manually performing pipenv ahead...
 
-[The Module]: #themodule
