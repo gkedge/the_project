@@ -15,7 +15,6 @@ if SRC_DIR_STR not in sys.path:
 # pylint: disable=import-error
 from the_project import Module0
 
-
 # pylint: enable=import-error
 
 
