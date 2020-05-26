@@ -19,8 +19,6 @@ run under `src` without augmenting `sys.path`?
 Would you expect that to work?
 
 \[Run run_the_project_main_reusable_func.py]  
-Why did that work? I tricked ya by adding 'src' directory to the the
-sys.path.  
 \[Comment out trick and run again.]
 
 #### Just because you can
@@ -34,7 +32,7 @@ because you can, doesn't mean...*
 Subscribing to that `src` directory guidance, that guidance infers:
 * don't introduce a `__init_.py` to make `src` a package
 * when importing, don't take advantage of `src` being a *namespace*
-  package. *More on namespace packages later*
+  package. *More on when namespace packages are awesome later*
 * you need to dynamically augment the `sys.path` to include the `src`
   directory.
 
@@ -46,10 +44,8 @@ directory to the `sys.path` is to the `conftest.py`:
 \[See conftest.py]
 
 ```
-PROJECT_PATH = Path(__file__).parent
-SRC_DIR_STR = str(PROJECT_PATH / 'src')
-if SRC_DIR_STR not in sys.path:
-    sys.path.append(SRC_DIR_STR)
+PROJECT_PATH = Path(__file__).parent.absolute()
+sys.path.append(str(PROJECT_PATH / 'src'))
 ```
 
 Running a test, our `sys.path` report will show the addition:
