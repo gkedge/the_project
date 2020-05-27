@@ -8,7 +8,7 @@ sys.dont_write_bytecode = True
 
 print_syspath(sort=False)
 
-PROJECT_PATH = Path(__file__).parent.absolute()
+PROJECT_PATH = Path(__file__).absolute().parent.parent
 assert str(PROJECT_PATH / 'src') not in sys.path
 sys.path.append(str(PROJECT_PATH / 'src'))
 print_syspath(sort=False)

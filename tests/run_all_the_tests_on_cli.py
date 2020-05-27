@@ -1,16 +1,20 @@
+import os
 import subprocess
+
 from enum import Enum, auto
 from os import PathLike
 from pathlib import Path
-from typing import List, Union, Sequence
+from typing import List, Union, Sequence, Dict
 
 TESTS: List[Path] = [
-    Path('test_package.py'),
-    # Path('src/run_the_project_main.py'),
-    # Path('run_the_project_main_reusable_func.py'),
-    Path('run_just_because_you_can.py'),
-    Path('test_the_project_main_reusable_func.py'),
+    Path('tests/test_package.py'),
+    Path('src/run_the_project_main.py'),
+    Path('tests/run_the_project_main_reusable_func.py'),
+    Path('tests/test_the_project_main_reusable_func.py'),
 ]
+
+ENV: Dict[str, str] = os.environ.copy()
+ENV.update({'PYTHONDONTWRITEBYTECODE': '-1'})
 
 
 class TestType(Enum):
@@ -25,16 +29,17 @@ def _run_pytest(test_type: TestType, test_module_or_directory: Path) -> \
         if test_type == TestType.PYTEST:
             command = f'pytest {test_module_or_directory}'
         elif test_type == TestType.PYTHON_PYTEST:
-            command = f'python -B  -m pytest {test_module_or_directory}'
+            command = f'python -m pytest {test_module_or_directory}'
         else:
             return None
     elif test_type == TestType.PYTHON and test_module_or_directory.name.startswith('run_'):
-        command = f'python -B {test_module_or_directory}'
+        command = f'python {test_module_or_directory}'
     else:
         return None
 
+    print(f"Running: {command}")
     return subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                            bufsize=1, universal_newlines=True)
+                            bufsize=1, universal_newlines=True, env=ENV)
 
 
 def _which_tests_how(running_test):
