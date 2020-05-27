@@ -8,9 +8,9 @@ from typing import List, Union, Sequence, Dict
 
 TESTS: List[Path] = [
     Path('tests/test_package.py'),
-    Path('src/run_the_project_main.py'),
     Path('tests/run_the_project_main_reusable_func.py'),
     Path('tests/test_the_project_main_reusable_func.py'),
+    Path('src/run_the_project_main.py'),
 ]
 
 ENV: Dict[str, str] = os.environ.copy()
