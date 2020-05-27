@@ -1,4 +1,5 @@
-## [The Package]
+## The Package
+[The Package]: #the-package
 
 Still, not the recommended file structure for a project, just a package
 example where the `the_project` package is created by having a directory
@@ -31,5 +32,4 @@ root directory) as the `the_project` package directory, all imports are
 statically discovered by Python & Pycharm automatically. with adding the
 directory containing the script run (`test_package.py`) to `sys.path`.
 
-[The Package]: #the-package
 
