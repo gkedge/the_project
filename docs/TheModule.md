@@ -1,12 +1,14 @@
-## [The Module]
+## The Module
+[The Module]: #themodule
 
 Every project starts small. We are starting with a flat, unrecommended
 file structure just to show simple access to a module in a directory
 from a sibling test case. \[`test_module0.py`]
 
-There is nothing special with Python to statically (no runtime, dynamic
-alteration of the `sys.path`) access the imported module. If Pycharm
-couldn't find the import, it would have a red underline under it.  
+There is nothing special with Python to statically (*no runtime, dynamic
+alteration of the `sys.path`*) access the imported module. If Pycharm
+couldn't statically find the import, it would have a red underline under
+it.  
 *Picture of red underline*
 
 Because, it is statically accessible, Pycharm can navigate directly to a
@@ -14,11 +16,15 @@ dependency with a click. It can also dependably refactor updating all
 usages of a change. \[demo Module0 name refactor]
 
 > **Reason**: Python automatically adds the parent directory containing
-> of the execution script to `sys.path` at runtime. Equally notable is
-> that **no part** of the parental chain of that directory OR the
-> current working directory is placed in the `sys.path`! That the
-> current working directory is the same location as the script being
-> executed is a rare case of serendipity.
+> of the execution script to `sys.path` at runtime.
+>
+> *Equally notable is that **no part** of the parental chain of that
+> directory OR the current working directory is placed in the
+> `sys.path`!*
+>
+> That the current working directory is the same location as the script
+> being executed is a rare case of serendipity since this directory
+> structure for Python development is not recommended.
 
 To better illustrate what is being added to `sys.path`, tests will print
 out the `sys.path` contents at the start of execution. \[open
@@ -53,6 +59,6 @@ command patterns via \[test_all_the_tests_on_cli.py] \[run
 
 > Q: If relying upon dynamic augmentation of `sys.path` is eradicated,
 > can't we rely on `*.ini` files? E.g.: `pytest.ini`
-
-[The Module]: #the-module
+>
+> A: Prolly not without manually performing pipenv ahead...
 
