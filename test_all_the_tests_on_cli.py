@@ -23,11 +23,11 @@ def _run_pytest(test_type: TestType, test_module_or_directory: Path) -> \
         if test_type == TestType.PYTEST:
             command = f'pytest {test_module_or_directory}'
         elif test_type == TestType.PYTHON_PYTEST:
-            command = f'python -m pytest {test_module_or_directory}'
+            command = f'python -B  -m pytest {test_module_or_directory}'
         else:
             return None
     elif test_type == TestType.PYTHON and test_module_or_directory.name.startswith('run_'):
-        command = f'python {test_module_or_directory}'
+        command = f'python -B {test_module_or_directory}'
     else:
         return None
 
@@ -38,7 +38,7 @@ def _run_pytest(test_type: TestType, test_module_or_directory: Path) -> \
 def _which_tests_how(running_test):
     args: Union[bytes, str, Sequence[Union[bytes, str, PathLike]]] = running_test.args
     which_test_how: str = f'\nArgs: {args}'
-    if isinstance(args, Sequence):
+    if isinstance(args, list):
         args: Sequence = args
         if 'python' in args:
             if 'pytest' in args:
