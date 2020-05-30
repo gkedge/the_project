@@ -80,4 +80,3 @@ directories to `sys.path` throughout the project's directory tree.
 > submodules` that will have `src` directories that will be easy to
 > programmatically discover to add to `sys.path` at the beginning of
 > each run of a script or test case.
-
