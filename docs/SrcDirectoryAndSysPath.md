@@ -6,6 +6,9 @@ intended for publication to PyPi. The definitive treatise on the topic
 is covered in the oft referenced article on
 [Python Packaging: The Structure, by Ionel Cristian Mărieș(Yonel Cristian Mariesh)](https://blog.ionelmc.ro/2014/05/25/python-packaging/#the-structure)
 
+\[share
+[Python Packaging: The Structure](https://blog.ionelmc.ro/2014/05/25/python-packaging/#the-structure)]
+
 Notice that all our source (`the_package` package and
 `run_the_project_main.py`) have moved under the `src` directory.
 
