@@ -11,6 +11,7 @@ Each lesson is a branch on this archive:
 - SrcDirectoryAndSysPath
 - TheNamespacePackage
 - PytestSysPath
+- TheNamespacePackage
 - SubProjects
 - SubProjectTestSupport
 - TheProject
