@@ -9,8 +9,8 @@ Each lesson is a branch on this archive:
 - [TheModule](./TheModule.md)
 - [ThePackage](./ThePackage.md)
 - [SrcDirectoryAndSysPath](./SrcDirectoryAndSysPath.md)
-- [TheNamespacePackage](./TheNamespacePackage.md)
 - PytestSysPath
+- TheNamespacePackage
 - SubProjects
 - SubProjectTestSupport
 - TheProject
