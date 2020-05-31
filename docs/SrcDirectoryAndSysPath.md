@@ -1,7 +1,5 @@
 ## The src Directory and sys.path
 
-\[apply patch]
-
 There are very valid reasons to have a `src` directory within a project.
 Most of the reasons pertain to the development testing of packages
 intended for publication to PyPi. The definitive treatise on the topic
@@ -33,13 +31,27 @@ because you can, doesn't mean...*
 
 \[See run_just_because_you_can.py]
 
-
 Subscribing to that `src` directory guidance, that guidance infers:
-* don't introduce a `__init_.py` to make `src` a package
 * when importing, don't take advantage of `src` being a *namespace*
   package. *More on when namespace packages are awesome later*
 * you need to dynamically augment the `sys.path` to include the `src`
-  directory.
+  directory ^§^
+* don't introduce a `__init_.py` to make `src` a package ^§^
+
+^§^ These two inferences are related. General Guidance:
+> *Never add a package directory, or any directory inside a package,
+> directly to `sys.path`. Doing so can easily lead to 'double imports'.*
+
+Since we are recognizing the need to augment the `sys.path` with `src`,
+it cannot be a package.  
+From
+[The Double-Import Trap](http://python-notes.curiousefficiency.org/en/latest/python_concepts/import_traps.html#the-double-import-trap):
+
+> The reason \[adding a package to `sys.path`] is problematic is that
+> every module in that directory is now potentially accessible under two
+> different names: as a top level module (since the directory is on
+> sys.path) and as a submodule of the package (if the higher level
+> directory containing the package itself is also on sys.path).
 
 My goal is to only ever add the `src` directory (or `src` directories)
 to the `sys.path`.
@@ -61,7 +73,7 @@ sys.path(2 paths):
 	/Users/greg/PycharmProjects/the_project/src
 ```
 
-As we learned during the For regular Python script running, the `src`
+As we learned during the regular Python script running, the `src`
 directory would have to be added. \[See `run_the_project_main.py`]
 
 Notice that Pycharm is noting that the `src` packages can't be resolve
@@ -69,14 +81,7 @@ statically anymore. This can be solved by telling Pycharm that the `src`
 directory is marked as a _Source Root_. This is very important to allow
 Pycharm to be able to refactor across the entire project! \[demo]
 
-
-For another lesson: Having `src` has advantage when it comes to
-augmenting `sys.path`: it provides a pattern that can be automated to
-alter `sys.path` in the most minimum of ways: only append `src`
-directories to `sys.path` throughout the project's directory tree.
-
-> *Hint of things to come:* though there is only one `src` directory at
-> this time, later in this tutorial set, we will accommodate `git
-> submodules` that will have `src` directories that will be easy to
-> programmatically discover to add to `sys.path` at the beginning of
-> each run of a script or test case.
+For another lesson: Having a `src` directory has a *pattern* advantage
+when it comes to augmenting `sys.path`: It is a simple pattern to search
+for `src` directories throughout the project (including git submodules)
+in an automated fashion to augment `sys.path` .
