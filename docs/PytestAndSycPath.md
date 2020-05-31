@@ -16,9 +16,6 @@ the `sys.path`. And...
 
 Pytest has its own bits of surprise when importing modules...
 
-\[open
-[test_can_test_case_import.py](../tests/test_can_test_case_import.py)]
-
 > Developing with `python -m pytest...` with its knack of adding the CWD
 > to `sys.path` is going to lock-in the location from which you run your
 > tests consistently.

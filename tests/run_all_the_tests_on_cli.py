@@ -8,7 +8,6 @@ from typing import List, Union, Sequence, Dict
 
 TESTS: List[Path] = [
     Path('tests/test_package.py'),
-    Path('tests/test_can_test_case_import.py'),
     Path('tests/test_the_project_main_reusable_func.py'),
     Path('src/run_the_project_main.py'),
 ]
