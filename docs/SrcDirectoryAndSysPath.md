@@ -47,11 +47,11 @@ it cannot be a package.
 From
 [The Double-Import Trap](http://python-notes.curiousefficiency.org/en/latest/python_concepts/import_traps.html#the-double-import-trap):
 
-> The reason this is problematic is that every module in that directory
-> is now potentially accessible under two different names: as a top
-> level module (since the directory is on sys.path) and as a submodule
-> of the package (if the higher level directory containing the package
-> itself is also on sys.path).
+> The reason \[adding a package to `sys.path`] is problematic is that
+> every module in that directory is now potentially accessible under two
+> different names: as a top level module (since the directory is on
+> sys.path) and as a submodule of the package (if the higher level
+> directory containing the package itself is also on sys.path).
 
 My goal is to only ever add the `src` directory (or `src` directories)
 to the `sys.path`.
