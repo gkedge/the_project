@@ -4,6 +4,13 @@ from os import PathLike
 from pathlib import Path
 from typing import List, Union, Sequence
 
+
+class TestType(Enum):
+    PYTEST = auto()
+    PYTHON_PYTEST = auto()
+    PYTHON = auto()
+
+
 TESTS: List[Path] = [
     Path('test_package.py'),
     # Path('src/run_the_project_main.py'),
@@ -11,12 +18,6 @@ TESTS: List[Path] = [
     Path('run_just_because_you_can.py'),
     Path('test_the_project_main_reusable_func.py'),
 ]
-
-
-class TestType(Enum):
-    PYTEST = auto()
-    PYTHON_PYTEST = auto()
-    PYTHON = auto()
 
 
 def _run_pytest(test_type: TestType, test_module_or_directory: Path) -> \
