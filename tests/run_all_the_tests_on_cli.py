@@ -7,12 +7,10 @@ import subprocess
 
 from enum import Enum, auto
 from os import PathLike
-from pathlib import Path
-from typing import List, Union, Sequence, Dict
 from pathlib import Path, PurePath
 from typing import List, Union, Sequence, Dict, NamedTuple, NewType
 
-PROJECT_PATH: Path = Path(__file__).absolute().parent
+PROJECT_PATH: Path = Path(__file__).absolute().parent.parent
 
 
 class TestCasePaths(NamedTuple):
@@ -98,16 +96,9 @@ class TestType(Enum):
     PYTHON = auto()
 
 
-TESTS: List[Path] = [
-    Path('tests/test_module0.py'),
-    Path('tests/test_package.py'),
-    Path('tests/test_can_test_case_import.py'),
-    Path('tests/test_the_project_main_reusable_func.py'),
-    Path('src/run_the_project_main.py'),
-]
-
 ENV: Dict[str, str] = os.environ.copy()
 ENV.update({'PYTHONDONTWRITEBYTECODE': '-1'})
+
 
 class RunningTestCase(NamedTuple):
     """
@@ -132,12 +123,10 @@ class RunningTestCase(NamedTuple):
 
 
 TESTS: List[TestCasePaths] = [
-    TestCasePaths.gen_test_case_paths(PROJECT_PATH, Path('test/test_module0.py')),
-    TestCasePaths.gen_test_case_paths(PROJECT_PATH, Path('test/test_package.py')),
-    TestCasePaths.gen_test_case_paths(PROJECT_PATH, Path('test/test_the_project_main_reusable_func.py')),
+    TestCasePaths.gen_test_case_paths(PROJECT_PATH, Path('tests/test_module0.py')),
+    TestCasePaths.gen_test_case_paths(PROJECT_PATH, Path('tests/test_package.py')),
+    TestCasePaths.gen_test_case_paths(PROJECT_PATH, Path('tests/test_the_project_main_reusable_func.py')),
     TestCasePaths.gen_test_case_paths(PROJECT_PATH, Path('src/run_the_project_main.py')),
-    TestCasePaths.gen_test_case_paths(PROJECT_PATH, Path('run_just_because_you_can.py')),
-    # TestCasePaths.gen_test_case_paths(PROJECT_PATH, Path('run_the_project_main_reusable_func.py')),
 ]
 
 ENV: Dict[str, str] = os.environ.copy()
