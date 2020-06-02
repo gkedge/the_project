@@ -1,6 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Pytest tests" type="CompoundRunConfigurationType">
-    <toRun name="pytest in test_can_test_case_import.py" type="tests" />
+    <toRun name="pytest for tests.test_module0" type="tests" />
+    <toRun name="pytest for tests.test_can_test_case_import.test_can_test_case_import_from_root_dir" type="tests" />
     <toRun name="pytest for tests.test_the_project_main_reusable_func" type="tests" />
     <toRun name="pytest for tests.test_package.test_func0" type="tests" />
     <method v="2" />
