@@ -117,21 +117,18 @@ class RunningTestCase(NamedTuple):
         return f'{which_test_how} from {self.cwd}'
 
 
-
-
-
 TESTS: List[TestCasePaths] = [
     TestCasePaths.gen_test_case_paths(PROJECT_PATH, Path('test_module0.py')),
     TestCasePaths.gen_test_case_paths(PROJECT_PATH, Path('test_package.py')),
-    # Path('src/run_the_project_main.py'),
-    # Path('run_the_project_main_reusable_func.py'),
-    TestCasePaths.gen_test_case_paths(PROJECT_PATH, Path('run_just_because_you_can.py'),
-    TestCasePaths.gen_test_case_paths(PROJECT_PATH, Path('run_the_project_main.py')),
     TestCasePaths.gen_test_case_paths(PROJECT_PATH, Path('test_the_project_main_reusable_func.py')),
+    TestCasePaths.gen_test_case_paths(PROJECT_PATH, Path('src/run_the_project_main.py')),
+    TestCasePaths.gen_test_case_paths(PROJECT_PATH, Path('run_just_because_you_can.py')),
+    # TestCasePaths.gen_test_case_paths(PROJECT_PATH, Path('run_the_project_main_reusable_func.py')),
 ]
 
 ENV: Dict[str, str] = os.environ.copy()
 ENV.update({'PYTHONDONTWRITEBYTECODE': '-1'})
+
 
 def _run_pytest(test_type: TestType, work_directory: Path, test_case: TestCasePaths) \
         -> Union[None, RunningTestCase]:
@@ -201,7 +198,6 @@ def _run_all_tests() -> None:
             print(f'\nCompleted (w/ error): {running_test_case}\n\t')
             # pylint: disable=expression-not-assigned
             [print(f'\t{line}', end='') for line in running_test_case.process.stdout]
-            [print(f'\t{line}', end='') for line in running_test_case.process.stderr]
             # pylint: enable=expression-not-assigned
             break
         print(f'\nCompleted: {running_test_case}\n\t')
@@ -214,7 +210,7 @@ def _run_all_tests() -> None:
     if tests_passed == test_count:
         print(f'\nAll {test_count} tests passed!')
     else:
-        print(f'\n{test_count} tests out of {test_count} passed ')
+        print(f'\n{tests_passed} tests out of {test_count} passed ')
 
 
 if __name__ == '__main__':
