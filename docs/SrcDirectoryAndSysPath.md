@@ -52,7 +52,7 @@ it _should_ not be a package.
 >  package to `sys.path` is problematic to loosely coupled packages is
 >  that every module in every package in the src directory would be
 >  accessible through relative imports; loosely coupled modules should
->  import from other packages using just a package qualified import; not
+>  import from other packages using just a package-qualified import; not
 >  a relative import.
 
 E.g.: In our example, `the_project.module0.py` has a dependency on
