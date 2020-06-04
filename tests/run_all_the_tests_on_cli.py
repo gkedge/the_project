@@ -128,6 +128,7 @@ TESTS: List[TestCasePaths] = [
     TestCasePaths.gen_test_case_paths(PROJECT_PATH, Path('tests/test_module0.py')),
     TestCasePaths.gen_test_case_paths(PROJECT_PATH, Path('tests/test_package.py')),
     TestCasePaths.gen_test_case_paths(PROJECT_PATH, Path('tests/test_the_project_main_reusable_func.py')),
+    TestCasePaths.gen_test_case_paths(PROJECT_PATH, Path('tests')),
     TestCasePaths.gen_test_case_paths(PROJECT_PATH, Path('src/run_the_project_main.py')),
 ]
 
