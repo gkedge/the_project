@@ -123,7 +123,6 @@ class RunningTestCase(NamedTuple):
 
 
 TESTS: List[TestCasePaths] = [
-    TestCasePaths.gen_test_case_paths(PROJECT_PATH, Path('tests/test_can_test_case_import.py')),
     TestCasePaths.gen_test_case_paths(PROJECT_PATH, Path('tests/test_utils.py')),
     TestCasePaths.gen_test_case_paths(PROJECT_PATH, Path('tests/test_module0.py')),
     TestCasePaths.gen_test_case_paths(PROJECT_PATH, Path('tests/test_package.py')),
