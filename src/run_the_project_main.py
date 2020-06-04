@@ -1,10 +1,10 @@
 """
 A simple __main__ to access references in the the_package
 """
+from runtime_syspath import print_syspath
 
 # Why is Pycharm/pylint being dumb here? Answered with a Q on __main__ tests below...
 import the_project
-from runtime_syspath import print_syspath
 
 print("Execute The Project.")
 
