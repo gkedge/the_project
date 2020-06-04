@@ -40,18 +40,30 @@ Subscribing to that `src` directory guidance, that guidance infers:
 
 ^§^ These two inferences are related. General Guidance:
 > *Never add a package directory, or any directory inside a package,
-> directly to `sys.path`. Doing so can easily lead to 'double imports'.*
+> directly to `sys.path`. Doing so can easily lead to package coupling
+> through relative imports.*
 
 Since we are recognizing the need to augment the `sys.path` with `src`,
-it cannot be a package.  
-From
-[The Double-Import Trap](http://python-notes.curiousefficiency.org/en/latest/python_concepts/import_traps.html#the-double-import-trap):
+it _should_ not be a package.
 
-> The reason \[adding a package to `sys.path`] is problematic is that
-> every module in that directory is now potentially accessible under two
-> different names: as a top level module (since the directory is on
-> sys.path) and as a submodule of the package (if the higher level
-> directory containing the package itself is also on sys.path).
+>  When creating packages under `src`, strive for loose-coupling between
+>  all packages within `src`; be in a place where a package can easily
+>  be converted to a pip-installable package. The reason that adding a
+>  package to `sys.path` is problematic to loosely coupled packages is
+>  that every module in every package in the src directory would be
+>  accessible through relative imports; loosely coupled modules should
+>  import from other packages using just a package-qualified import; not
+>  a relative import.
+
+E.g.: In our example, `the_project.module0.py` has a dependency on
+`common.utils.py`. `the_project.module0.py` should satisfy that
+dependency using:
+```
+from common import module
+# not  
+from ..common import module
+```
+Leave relative imports to in-package importation.
 
 My goal is to only ever add the `src` directory (or `src` directories)
 to the `sys.path`.
