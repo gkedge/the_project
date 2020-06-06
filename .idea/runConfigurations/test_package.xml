@@ -1,18 +1,18 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="test_all_the_tests_on_cli" type="PythonConfigurationType" factoryName="Python" singleton="true" nameIsGenerated="true">
+  <configuration default="false" name="test_package" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
     <module name="the_project" />
-    <option name="INTERPRETER_OPTIONS" value="-B" />
+    <option name="INTERPRETER_OPTIONS" value="-B -m pytest" />
     <option name="PARENT_ENVS" value="true" />
     <envs>
       <env name="PYTHONUNBUFFERED" value="1" />
     </envs>
-    <option name="SDK_HOME" value="$USER_HOME$/.local/share/virtualenvs/the_project-Ksf4cJCC/bin/python" />
+    <option name="SDK_HOME" value="" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-    <option name="IS_MODULE_SDK" value="false" />
+    <option name="IS_MODULE_SDK" value="true" />
     <option name="ADD_CONTENT_ROOTS" value="false" />
     <option name="ADD_SOURCE_ROOTS" value="false" />
     <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-    <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test_all_the_tests_on_cli.py" />
+    <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test_package.py" />
     <option name="PARAMETERS" value="" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="false" />

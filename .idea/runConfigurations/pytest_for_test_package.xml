@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="pytest for test_package.test_func0" type="tests" factoryName="py.test" singleton="false" nameIsGenerated="true">
+  <configuration default="false" name="pytest for test_package" type="tests" factoryName="py.test" singleton="true" nameIsGenerated="true">
     <module name="the_project" />
     <option name="INTERPRETER_OPTIONS" value="-B" />
     <option name="PARENT_ENVS" value="true" />
@@ -12,7 +12,7 @@
     <option name="_new_keywords" value="&quot;&quot;" />
     <option name="_new_parameters" value="&quot;&quot;" />
     <option name="_new_additionalArguments" value="&quot;&quot;" />
-    <option name="_new_target" value="&quot;test_package.test_func0&quot;" />
+    <option name="_new_target" value="&quot;test_package&quot;" />
     <option name="_new_targetType" value="&quot;PYTHON&quot;" />
     <method v="2" />
   </configuration>
