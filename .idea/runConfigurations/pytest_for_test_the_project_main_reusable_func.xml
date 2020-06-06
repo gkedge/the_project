@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="pytest for test_the_project_main_reusable_func" type="tests" factoryName="py.test" singleton="false" nameIsGenerated="true">
+  <configuration default="false" name="pytest for test_the_project_main_reusable_func" type="tests" factoryName="py.test" singleton="true" nameIsGenerated="true">
     <module name="the_project" />
     <option name="INTERPRETER_OPTIONS" value="-B" />
     <option name="PARENT_ENVS" value="true" />
