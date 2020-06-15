@@ -38,7 +38,7 @@ Each lesson is a branch on this archive:
    name of the project since the package is the minimal unit of code
    distribution in Python.
 5. Use relative imports for intra-package importation; not inter-package
-   importation. _The following have no influence on the success or
+   importation. _The following have **no** influence on the success or
    failure to relatively import:_
    * _members of `sys.path`_
    * _whether a package has a package initializer(`__init__.py`) or
