@@ -6,4 +6,4 @@ class Module0:
         return 'module0.py:Module0'
 
     def func0(self) -> str:
-        return f'module0.py:func0 (with help from: {util0()})'
+        return f'{self}::func0 (with help from: {util0()})'
