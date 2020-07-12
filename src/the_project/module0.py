@@ -1,4 +1,4 @@
-from common import utils
+from common import util0
 
 
 class Module0:
@@ -6,4 +6,4 @@ class Module0:
         return 'module0.py:Module0'
 
     def func0(self) -> str:
-        return f'module0.py:func0 (with help from: {utils.util0()})'
+        return f'{self}::func0 (with help from: {util0()})'

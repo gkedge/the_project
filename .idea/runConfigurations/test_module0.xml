@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="test_module0" type="PythonConfigurationType" factoryName="Python" singleton="false" nameIsGenerated="true">
+  <configuration default="false" name="test_module0" type="PythonConfigurationType" factoryName="Python" singleton="true" nameIsGenerated="true">
     <module name="the_project" />
     <option name="INTERPRETER_OPTIONS" value="-B -m pytest" />
     <option name="PARENT_ENVS" value="true" />

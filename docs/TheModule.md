@@ -1,7 +1,7 @@
 ## The Module
 [The Module]: #themodule
 
-Every project starts small. We are starting with a flat, unrecommended
+Every project starts small. We are starting with a flat, _unrecommended_
 file structure just to show simple access to a module in a directory
 from a sibling test case. \[`test_module0.py`]
 
@@ -15,8 +15,8 @@ Because, it is statically accessible, Pycharm can navigate directly to a
 dependency with a click. It can also dependably refactor updating all
 usages of a change. \[demo Module0 name refactor]
 
-> **Reason**: Python automatically adds the parent directory containing
-> of the execution script to `sys.path` at runtime.
+> **Reason**: Python automatically adds the parent directory of the
+> _runnable_ script to `sys.path` at runtime.
 >
 > *Equally notable is that **no part** of the parental chain of that
 > directory OR the current working directory is placed in the
@@ -47,7 +47,7 @@ Their primary difference lies with the fact that calling via `python -p
 pytest` **will** add the current working directory to `sys.path` in
 addition to `test_script.py`'s parent directory. Due to the the nature
 of using `pytest` this way, calling `pytest` directly will become
-unusable over time as code becomes relient upon the inclusion of the
+unusable over time as code becomes reliant upon the inclusion of the
 working directory. This be sad for all IDE test runner goodness.
 
 For the case of [The Module] demo with both module and test being in the
