@@ -23,9 +23,24 @@ class TestType(Enum):
     PYTHON_PYTEST = auto()
     PYTHON = auto()
 
+    def is_pytest(self) -> bool:
+        return self in [TestType.PYTEST, TestType.PYTHON_PYTEST]
 
-def all_test_types() -> Tuple[TestType, ...]:
-    return tuple(test_type for test_type in TestType)
+    @staticmethod
+    def all_test_types() -> Tuple["TestType", ...]:
+        return tuple(test_type for test_type in TestType)
+
+    @staticmethod
+    def only_pytest_types(original_types: Tuple["TestType", ...]) -> Tuple["TestType", ...]:
+        return tuple(test_type for test_type in original_types if test_type.is_pytest())
+
+    @staticmethod
+    def is_only_pytest_types(original_types: Tuple["TestType", ...]) -> bool:
+        for test_type in original_types:
+            if not test_type.is_pytest():
+                return False
+
+        return True
 
 
 class TestCasePaths(NamedTuple):
@@ -37,17 +52,18 @@ class TestCasePaths(NamedTuple):
     NOTE: Sub-projects will have different project_roots than the_project(PROJECT_PATH).
     """
 
-    project_root: Path
     # full_test_case_path can be a file or directory containing test cases
     full_test_case_path: Path
     test_types: Tuple[TestType]
+    project_root: Path
+    pytest_filter: str
 
     def __str__(self):
         return f'{self.project_root}::{self.full_test_case_path.relative_to(self.project_root)}'
 
     @classmethod
-    def gen_test_case_paths(cls, project_root: Path, test_case: Path,
-                            test_types: Tuple[TestType] = all_test_types()) -> "TestCasePaths":
+    def gen_test_case_paths(cls, test_case: Path, test_types: Tuple[TestType, ...] = TestType.all_test_types(),
+                            project_root: Path = PROJECT_PATH, pytest_filter: str = None) -> "TestCasePaths":
         """
         This TestCasePaths generator expects the test_case to be a fragment from the project root to the test script.
         The project_root is prepended to the test_case and provided as the 'TestCasePaths.full_test_case_path'
@@ -56,25 +72,24 @@ class TestCasePaths(NamedTuple):
         Note: the project_root could be different from the the_project root dir(PROJECT_PATH) for contained
         sub-projects.
 
-        :param project_root:
         :param test_case:
         :param test_types:
-        :return:
+        :param project_root:
+        :param pytest_filter: pytest -k string
+        :return: test case paths object
         """
         project_root: Path = project_root.absolute()
         full_test_case_path: Path = (project_root / test_case).absolute()
         if not full_test_case_path.exists():
             raise FileNotFoundError(f'Test case {full_test_case_path} does not exist.')
 
-        return TestCasePaths(project_root, full_test_case_path, test_types)
+        if full_test_case_path.is_dir():
+            test_types = TestType.only_pytest_types(test_types)
 
-    def is_pytest(self) -> bool:
-        """
-        Determine of the test case is a pytest (a file that begins with 'test_' or a directory)
-        :return: True/False
-        """
-        return (self.full_test_case_path.stem.startswith('test_') or
-                self.full_test_case_path.is_dir())
+        if pytest_filter and not TestType.is_only_pytest_types(test_types):
+            raise RuntimeError(f'filter {pytest_filter} may only be used for pytests.')
+
+        return TestCasePaths(full_test_case_path, test_types, project_root, pytest_filter)
 
     def is_script(self) -> bool:
         """
@@ -84,6 +99,20 @@ class TestCasePaths(NamedTuple):
         """
         return (self.full_test_case_path.stem.startswith('run_') and
                 not self.full_test_case_path.is_dir())
+
+    def python_command(self, test_type: TestType) -> Optional[str]:
+        command: Optional[str] = None
+        if test_type.is_pytest():
+            if test_type == TestType.PYTEST:
+                command = 'pytest'
+            else:
+                command = 'python -B -m pytest'
+            if self.pytest_filter:
+                command = f'{command} -k "{self.pytest_filter}"'
+        elif self.is_script():
+            command = 'python -B'
+
+        return command
 
     def test_case_relative_to_cwd(self, working_directory: Path) -> Path:
         return self.full_test_case_path.relative_to(working_directory)
@@ -151,18 +180,14 @@ class RunningTestCase(NamedTuple):
 
 
 TESTS: List[TestCasePaths] = [
-    TestCasePaths.gen_test_case_paths(PROJECT_PATH,
-                                      Path('tests/test_can_test_case_import.py'),
-                                      (TestType.PYTEST,)),
-    TestCasePaths.gen_test_case_paths(PROJECT_PATH, Path('tests/test_utils.py')),
-    TestCasePaths.gen_test_case_paths(PROJECT_PATH, Path('tests/test_file_utils.py')),
-    TestCasePaths.gen_test_case_paths(PROJECT_PATH, Path('tests/test_module0.py')),
-    TestCasePaths.gen_test_case_paths(PROJECT_PATH, Path('tests/test_package.py')),
-    TestCasePaths.gen_test_case_paths(PROJECT_PATH, Path('tests/test_the_project_main_reusable_func.py')),
-    TestCasePaths.gen_test_case_paths(PROJECT_PATH, Path('tests')),
-    TestCasePaths.gen_test_case_paths(PROJECT_PATH,
-                                      Path('src/run_the_project_main.py'),
-                                      (TestType.PYTHON,)),
+    TestCasePaths.gen_test_case_paths(Path('tests/test_can_test_case_import.py'), (TestType.PYTEST,)),
+    TestCasePaths.gen_test_case_paths(Path('tests/test_utils.py')),
+    TestCasePaths.gen_test_case_paths(Path('tests/test_file_utils.py')),
+    TestCasePaths.gen_test_case_paths(Path('tests/test_module0.py')),
+    TestCasePaths.gen_test_case_paths(Path('tests/test_package.py')),
+    TestCasePaths.gen_test_case_paths(Path('tests/test_the_project_main_reusable_func.py')),
+    TestCasePaths.gen_test_case_paths(Path('tests'), pytest_filter='(not test_can_test_case_import_from_root_dir)'),
+    TestCasePaths.gen_test_case_paths(Path('src/run_the_project_main.py'), (TestType.PYTHON,)),
 ]
 
 ENV: Dict[str, str] = os.environ.copy()
@@ -182,17 +207,10 @@ def _run_pytest(test_type: TestType, work_directory: Path, test_case_paths: Test
     :return: a RunningTestCase containing references to the running process(Popen object) and data associated with
     how the process was started
     """
-    if test_case_paths.is_pytest():
-        if test_type == TestType.PYTEST:
-            command = 'pytest'
-        elif test_type == TestType.PYTHON_PYTEST:
-            command = 'python -B -m pytest -k "(not test_can_test_case_import_from_root_dir)"'
-        else:
-            return None
-    elif test_type == TestType.PYTHON and test_case_paths.is_script():
-        command = 'python -B'
-    else:
-        return None
+
+    command: str = test_case_paths.python_command(test_type)
+    if not command:
+        return
 
     cwd_relative_to_test_case_project: Path = test_case_paths.cwd_relative_to_project(work_directory)
     test_case_relative_to_cwd = test_case_paths.test_case_relative_to_cwd(work_directory)
