@@ -3,14 +3,29 @@ Run a series of test invocation making sure each test case works with both 'pyte
 working directory between the project root and the directory containing the test script.
 """
 import os
+import shlex
 import subprocess
 
 from enum import Enum, auto
 from os import PathLike
 from pathlib import Path, PurePath
-from typing import List, Union, Sequence, Dict, NamedTuple, NewType
+import time
+from typing import List, Union, Sequence, Dict, NamedTuple, NewType, Optional, Tuple
 
 PROJECT_PATH: Path = Path(__file__).absolute().parent.parent
+
+
+class TestType(Enum):
+    """
+    TestType enum
+    """
+    PYTEST = auto()
+    PYTHON_PYTEST = auto()
+    PYTHON = auto()
+
+
+def all_test_types() -> Tuple[TestType, ...]:
+    return tuple(test_type for test_type in TestType)
 
 
 class TestCasePaths(NamedTuple):
@@ -23,14 +38,16 @@ class TestCasePaths(NamedTuple):
     """
 
     project_root: Path
-    # test_case can be a file or directory containing test cases
+    # full_test_case_path can be a file or directory containing test cases
     full_test_case_path: Path
+    test_types: Tuple[TestType]
 
     def __str__(self):
         return f'{self.project_root}::{self.full_test_case_path.relative_to(self.project_root)}'
 
     @classmethod
-    def gen_test_case_paths(cls, project_root: Path, test_case: Path) -> "TestCasePaths":
+    def gen_test_case_paths(cls, project_root: Path, test_case: Path,
+                            test_types: Tuple[TestType] = all_test_types()) -> "TestCasePaths":
         """
         This TestCasePaths generator expects the test_case to be a fragment from the project root to the test script.
         The project_root is prepended to the test_case and provided as the 'TestCasePaths.full_test_case_path'
@@ -41,6 +58,7 @@ class TestCasePaths(NamedTuple):
 
         :param project_root:
         :param test_case:
+        :param test_types:
         :return:
         """
         project_root: Path = project_root.absolute()
@@ -48,7 +66,7 @@ class TestCasePaths(NamedTuple):
         if not full_test_case_path.exists():
             raise FileNotFoundError(f'Test case {full_test_case_path} does not exist.')
 
-        return TestCasePaths(project_root, full_test_case_path)
+        return TestCasePaths(project_root, full_test_case_path, test_types)
 
     def is_pytest(self) -> bool:
         """
@@ -67,7 +85,26 @@ class TestCasePaths(NamedTuple):
         return (self.full_test_case_path.stem.startswith('run_') and
                 not self.full_test_case_path.is_dir())
 
-    def get_working_directories(self) -> List[Path]:
+    def test_case_relative_to_cwd(self, working_directory: Path) -> Path:
+        return self.full_test_case_path.relative_to(working_directory)
+
+    def cwd_relative_to_project(self, working_directory: Path) -> Path:
+        """
+        This method may seem odd, but submodules will have a different project roots
+        than the top-level project root.
+
+        :param working_directory: absolute path to cwd
+        :return: working directory relative to the test case's project_root
+        """
+        if working_directory == self.project_root:
+            work_directory = self.project_root.relative_to(PROJECT_PATH)
+        else:
+            work_directory = self.project_root.relative_to(PROJECT_PATH) / \
+                             working_directory.relative_to(self.project_root)
+        return work_directory
+
+    @property
+    def working_directories(self) -> List[Path]:
         """
 
         :return: list of absolute paths from the project directory to the directory containing the script.
@@ -87,15 +124,6 @@ class TestCasePaths(NamedTuple):
         return working_directories
 
 
-class TestType(Enum):
-    """
-    TestType enum
-    """
-    PYTEST = auto()
-    PYTHON_PYTEST = auto()
-    PYTHON = auto()
-
-
 ENV: Dict[str, str] = os.environ.copy()
 ENV.update({'PYTHONDONTWRITEBYTECODE': '-1'})
 
@@ -105,8 +133,8 @@ class RunningTestCase(NamedTuple):
     Named tuple associated with a currently running test case.
     """
     test_type: TestType
-    cwd: str
-    process: Union[None, subprocess.Popen]
+    cwd: Path
+    process: Optional[subprocess.Popen]
 
     def __str__(self):
         args: POpenArgs = self.process.args
@@ -123,61 +151,60 @@ class RunningTestCase(NamedTuple):
 
 
 TESTS: List[TestCasePaths] = [
-    TestCasePaths.gen_test_case_paths(PROJECT_PATH, Path('tests/test_can_test_case_import.py')),
+    TestCasePaths.gen_test_case_paths(PROJECT_PATH,
+                                      Path('tests/test_can_test_case_import.py'),
+                                      (TestType.PYTEST,)),
     TestCasePaths.gen_test_case_paths(PROJECT_PATH, Path('tests/test_utils.py')),
     TestCasePaths.gen_test_case_paths(PROJECT_PATH, Path('tests/test_file_utils.py')),
     TestCasePaths.gen_test_case_paths(PROJECT_PATH, Path('tests/test_module0.py')),
     TestCasePaths.gen_test_case_paths(PROJECT_PATH, Path('tests/test_package.py')),
     TestCasePaths.gen_test_case_paths(PROJECT_PATH, Path('tests/test_the_project_main_reusable_func.py')),
     TestCasePaths.gen_test_case_paths(PROJECT_PATH, Path('tests')),
-    TestCasePaths.gen_test_case_paths(PROJECT_PATH, Path('src/run_the_project_main.py')),
+    TestCasePaths.gen_test_case_paths(PROJECT_PATH,
+                                      Path('src/run_the_project_main.py'),
+                                      (TestType.PYTHON,)),
 ]
 
 ENV: Dict[str, str] = os.environ.copy()
 ENV.update({'PYTHONDONTWRITEBYTECODE': '-1'})
 
 
-def _run_pytest(test_type: TestType, work_directory: Path, test_case: TestCasePaths) \
-        -> Union[None, RunningTestCase]:
+def _run_pytest(test_type: TestType, work_directory: Path, test_case_paths: TestCasePaths) -> \
+        Optional[RunningTestCase]:
     """
     Run a python script base on the test_type.
 
-    None: is returned if the test_case can't be run with the requested test_type.
+    None: is returned if the test case can't be run with the requested test_type.
 
-    :param test_type: enum to determine if a pytest (or a python-pytest) or a regular runnable script.
+    :param test_type: enum to determine if a pytest (or a python-pytest) or a regular runnable script
     :param work_directory: working directory from whence the script is run
-    :param test_case: full path to the script
+    :param test_case_paths: manage test case paths relative to project root and current working directory
     :return: a RunningTestCase containing references to the running process(Popen object) and data associated with
-    how the process was started.
+    how the process was started
     """
-    if test_case.is_pytest():
+    if test_case_paths.is_pytest():
         if test_type == TestType.PYTEST:
             command = 'pytest'
         elif test_type == TestType.PYTHON_PYTEST:
-            command = 'python -B -m pytest'
+            command = 'python -B -m pytest -k "(not test_can_test_case_import_from_root_dir)"'
         else:
             return None
-    elif test_type == TestType.PYTHON and test_case.is_script():
+    elif test_type == TestType.PYTHON and test_case_paths.is_script():
         command = 'python -B'
     else:
         return None
 
-    if work_directory == test_case.project_root:
-        work_directory_str = test_case.project_root.relative_to(PROJECT_PATH)
-    else:
-        work_directory_str = f'{test_case.project_root.relative_to(PROJECT_PATH)}/' \
-                             f'{work_directory.relative_to(test_case.project_root)}'
+    cwd_relative_to_test_case_project: Path = test_case_paths.cwd_relative_to_project(work_directory)
+    test_case_relative_to_cwd = test_case_paths.test_case_relative_to_cwd(work_directory)
+    print(f'Starting: {command} {test_case_relative_to_cwd} from {cwd_relative_to_test_case_project}')
 
-    print(f'Starting: {command} {test_case.full_test_case_path.relative_to(work_directory)} '
-          f'from {work_directory_str}')
-
-    command = f'{command} {test_case.full_test_case_path}'
+    command = f'{command} {test_case_relative_to_cwd}'
     process: subprocess.Popen = \
-        subprocess.Popen(command.split(), cwd=str(work_directory),
+        subprocess.Popen(shlex.split(command), cwd=str(work_directory),
                          stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                          bufsize=1, universal_newlines=True, env=ENV)
 
-    return RunningTestCase(test_type, work_directory_str, process)
+    return RunningTestCase(test_type, cwd_relative_to_test_case_project, process)
 
 
 POpenArgs = NewType('POpenArgs', Union[bytes, str, Sequence[Union[bytes, str, PathLike]]])
@@ -190,10 +217,13 @@ def _run_all_tests() -> None:
     for test in TESTS:
         # ... over all test types
         for test_type in TestType:
+            if test_type not in test.test_types:
+                continue
             # ... changing the work dir from the project root to directory containing script
-            for working_directory in test.get_working_directories():
-                running_test_case: Union[None, RunningTestCase] = \
+            for working_directory in test.working_directories:
+                running_test_case: Optional[RunningTestCase] = \
                     _run_pytest(test_type, working_directory, test)
+                time.sleep(.1)
                 if running_test_case:
                     running_test_cases.append(running_test_case)
 
