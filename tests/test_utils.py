@@ -11,10 +11,11 @@ def test_util0():
 
 def test_create_tmp_directory(request: SubRequest):
     def finalize_test():
-        Path('tmper').rmdir()
+        Path('tmp').rmdir()
+        Path('tempest').rmdir()
 
     request.addfinalizer(finalize_test)
     create_tmp_directory()
-    mkdir_p('tmper')
+    mkdir_p('tempest')
 
-    assert Path('tmper').exists()
+    assert Path('tempest').exists()

@@ -7,9 +7,9 @@ from common import mkdir_p
 
 def test_mkdir_p(request: SubRequest):
     def finalize_test():
-        Path('tmp').rmdir()
+        Path('tmper').rmdir()
 
     request.addfinalizer(finalize_test)
-    mkdir_p('tmp')
+    mkdir_p('tmper')
 
-    assert Path('tmp').exists()
+    assert Path('tmper').exists()

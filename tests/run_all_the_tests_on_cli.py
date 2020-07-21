@@ -6,13 +6,22 @@ import os
 import shlex
 import subprocess
 
-from enum import Enum, auto
+from enum import Enum, auto, IntEnum
 from os import PathLike
 from pathlib import Path, PurePath
-import time
 from typing import List, Union, Sequence, Dict, NamedTuple, NewType, Optional, Tuple
 
 PROJECT_PATH: Path = Path(__file__).absolute().parent.parent
+
+
+class Group(IntEnum):
+    ONE = auto()
+    TWO = auto()
+    THREE = auto()
+    FOUR = auto()
+    FIVE = auto()
+    SIX = auto()
+    SEVEN = auto()
 
 
 class TestType(Enum):
@@ -57,13 +66,15 @@ class TestCasePaths(NamedTuple):
     test_types: Tuple[TestType]
     project_root: Path
     pytest_filter: str
+    group: Group
 
     def __str__(self):
         return f'{self.project_root}::{self.full_test_case_path.relative_to(self.project_root)}'
 
     @classmethod
     def gen_test_case_paths(cls, test_case: Path, test_types: Tuple[TestType, ...] = TestType.all_test_types(),
-                            project_root: Path = PROJECT_PATH, pytest_filter: str = None) -> "TestCasePaths":
+                            project_root: Path = PROJECT_PATH, pytest_filter: str = None,
+                            group: Group = Group.ONE) -> "TestCasePaths":
         """
         This TestCasePaths generator expects the test_case to be a fragment from the project root to the test script.
         The project_root is prepended to the test_case and provided as the 'TestCasePaths.full_test_case_path'
@@ -76,7 +87,10 @@ class TestCasePaths(NamedTuple):
         :param test_types:
         :param project_root:
         :param pytest_filter: pytest -k string
+        :param group:
+
         :return: test case paths object
+
         """
         project_root: Path = project_root.absolute()
         full_test_case_path: Path = (project_root / test_case).absolute()
@@ -89,16 +103,7 @@ class TestCasePaths(NamedTuple):
         if pytest_filter and not TestType.is_only_pytest_types(test_types):
             raise RuntimeError(f'filter {pytest_filter} may only be used for pytests.')
 
-        return TestCasePaths(full_test_case_path, test_types, project_root, pytest_filter)
-
-    def is_script(self) -> bool:
-        """
-        Determine if the test case is a script that is run (not a pytest).
-        A script that is simply run by Python is a file that begins with 'run_' and isn't a directory)
-        :return: True/False
-        """
-        return (self.full_test_case_path.stem.startswith('run_') and
-                not self.full_test_case_path.is_dir())
+        return TestCasePaths(full_test_case_path, test_types, project_root, pytest_filter, group)
 
     def python_command(self, test_type: TestType) -> Optional[str]:
         command: Optional[str] = None
@@ -109,7 +114,7 @@ class TestCasePaths(NamedTuple):
                 command = 'python -B -m pytest'
             if self.pytest_filter:
                 command = f'{command} -k "{self.pytest_filter}"'
-        elif self.is_script():
+        elif self._is_script():
             command = 'python -B'
 
         return command
@@ -152,15 +157,41 @@ class TestCasePaths(NamedTuple):
             working_directories.append(self.project_root / next_part)
         return working_directories
 
+    def _is_script(self) -> bool:
+        """
+        Determine if the test case is a script that is run (not a pytest).
+        A script that is simply run by Python is a file that begins with 'run_' and isn't a directory)
+        :return: True/False
+        """
+        return (self.full_test_case_path.stem.startswith('run_') and
+                not self.full_test_case_path.is_dir())
+
 
 ENV: Dict[str, str] = os.environ.copy()
 ENV.update({'PYTHONDONTWRITEBYTECODE': '-1'})
+
+TEST_CASE_PATHS: Tuple[TestCasePaths, ...] = (
+    TestCasePaths.gen_test_case_paths(Path('tests/test_can_test_case_import.py'), (TestType.PYTEST,)),
+    TestCasePaths.gen_test_case_paths(Path('tests/test_utils.py')),
+    TestCasePaths.gen_test_case_paths(Path('tests/test_file_utils.py'), group=Group.TWO),
+    TestCasePaths.gen_test_case_paths(Path('tests/test_module0.py')),
+    TestCasePaths.gen_test_case_paths(Path('tests/test_package.py')),
+    TestCasePaths.gen_test_case_paths(Path('tests/test_the_project_main_reusable_func.py')),
+    TestCasePaths.gen_test_case_paths(Path('tests'), pytest_filter='(not test_can_test_case_import_from_root_dir)',
+                                      group=Group.THREE),
+    TestCasePaths.gen_test_case_paths(Path('src/run_the_project_main.py'), (TestType.PYTHON,)),
+)
+
+
+def get_group_tests(group: Group) -> Tuple[TestCasePaths, ...]:
+    return tuple(tcp for tcp in TEST_CASE_PATHS if group == tcp.group)
 
 
 class RunningTestCase(NamedTuple):
     """
     Named tuple associated with a currently running test case.
     """
+    group: Group
     test_type: TestType
     cwd: Path
     process: Optional[subprocess.Popen]
@@ -171,27 +202,12 @@ class RunningTestCase(NamedTuple):
         if isinstance(args, list):
             args: Sequence = args
             if self.test_type == TestType.PYTHON:
-                which_test_how = f'script: {args[-1]}'
+                which_test_how = f'(Group {self.group}) script: {args[-1]}'
             elif self.test_type == TestType.PYTHON_PYTEST:
-                which_test_how = f'Python pytest: {args[-1]}'
+                which_test_how = f'(Group {self.group}) Python pytest: {args[-1]}'
             elif self.test_type == TestType.PYTEST:
-                which_test_how = f'pytest: {args[-1]}'
+                which_test_how = f'(Group {self.group}) pytest: {args[-1]}'
         return f'{which_test_how} from {self.cwd}'
-
-
-TESTS: List[TestCasePaths] = [
-    TestCasePaths.gen_test_case_paths(Path('tests/test_can_test_case_import.py'), (TestType.PYTEST,)),
-    TestCasePaths.gen_test_case_paths(Path('tests/test_utils.py')),
-    TestCasePaths.gen_test_case_paths(Path('tests/test_file_utils.py')),
-    TestCasePaths.gen_test_case_paths(Path('tests/test_module0.py')),
-    TestCasePaths.gen_test_case_paths(Path('tests/test_package.py')),
-    TestCasePaths.gen_test_case_paths(Path('tests/test_the_project_main_reusable_func.py')),
-    TestCasePaths.gen_test_case_paths(Path('tests'), pytest_filter='(not test_can_test_case_import_from_root_dir)'),
-    TestCasePaths.gen_test_case_paths(Path('src/run_the_project_main.py'), (TestType.PYTHON,)),
-]
-
-ENV: Dict[str, str] = os.environ.copy()
-ENV.update({'PYTHONDONTWRITEBYTECODE': '-1'})
 
 
 def _run_pytest(test_type: TestType, work_directory: Path, test_case_paths: TestCasePaths) -> \
@@ -222,7 +238,7 @@ def _run_pytest(test_type: TestType, work_directory: Path, test_case_paths: Test
                          stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                          bufsize=1, universal_newlines=True, env=ENV)
 
-    return RunningTestCase(test_type, cwd_relative_to_test_case_project, process)
+    return RunningTestCase(test_case_paths.group, test_type, cwd_relative_to_test_case_project, process)
 
 
 POpenArgs = NewType('POpenArgs', Union[bytes, str, Sequence[Union[bytes, str, PathLike]]])
@@ -230,37 +246,39 @@ POpenArgs = NewType('POpenArgs', Union[bytes, str, Sequence[Union[bytes, str, Pa
 
 def _run_all_tests() -> None:
     running_test_cases: List[RunningTestCase] = []
+    test_count: int = 0
+    tests_passed: int = 0
 
     # Start all tests
-    for test in TESTS:
-        # ... over all test types
-        for test_type in TestType:
-            if test_type not in test.test_types:
-                continue
-            # ... changing the work dir from the project root to directory containing script
-            for working_directory in test.working_directories:
-                running_test_case: Optional[RunningTestCase] = \
-                    _run_pytest(test_type, working_directory, test)
-                time.sleep(.1)
-                if running_test_case:
-                    running_test_cases.append(running_test_case)
+    for group in Group:
+        for test_case_path in get_group_tests(group):
+            # ... over all test_case_path types
+            for test_type in TestType:
+                if test_type not in test_case_path.test_types:
+                    continue
+                # ... changing the work dir from the project root to directory containing script
+                for working_directory in test_case_path.working_directories:
+                    running_test_case: Optional[RunningTestCase] = \
+                        _run_pytest(test_type, working_directory, test_case_path)
+                    if running_test_case:
+                        running_test_cases.append(running_test_case)
 
-    test_count: int = len(running_test_cases)
-    tests_passed: int = 0
-    # Print them out when each complete (in order)
-    for running_test_case in running_test_cases:
-        if running_test_case.process.wait() != 0:
-            print(f'\nCompleted (w/ error): {running_test_case}\n\t')
+        test_count += len(running_test_cases)
+        # Print them out when each complete (in order)
+        for running_test_case in running_test_cases:
+            if running_test_case.process.wait() != 0:
+                print(f'\nCompleted (w/ error): {running_test_case}\n\t')
+                # pylint: disable=expression-not-assigned
+                [print(f'\t{line}', end='') for line in running_test_case.process.stdout]
+                # pylint: enable=expression-not-assigned
+            print(f'\nCompleted: {running_test_case}\n\t')
             # pylint: disable=expression-not-assigned
             [print(f'\t{line}', end='') for line in running_test_case.process.stdout]
             # pylint: enable=expression-not-assigned
-            break
-        print(f'\nCompleted: {running_test_case}\n\t')
-        # pylint: disable=expression-not-assigned
-        [print(f'\t{line}', end='') for line in running_test_case.process.stdout]
-        # pylint: enable=expression-not-assigned
 
-        tests_passed += 1
+            tests_passed += 1
+        else:
+            running_test_cases.clear()
 
     if tests_passed == test_count:
         print(f'\nAll {test_count} tests passed!')
