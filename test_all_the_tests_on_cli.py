@@ -11,12 +11,13 @@ from os import PathLike
 from pathlib import Path, PurePath
 from typing import List, Union, Sequence, Dict, NamedTuple, NewType, Optional, Tuple
 
-PROJECT_PATH: Path = Path(__file__).absolute().parent
-
 
 class TestCasePath:
-
     def __init__(self, project_root: PurePath, test_case: PurePath):
+        """
+        Note: the project_root could be a subproject's root; not necessarily to run of
+        the project leveraging this CLI test runner.
+        """
         self._project_root: PurePath = project_root
         self._test_case: PurePath = test_case
         self.check_test_case_path()
@@ -59,10 +60,10 @@ class TestCasePath:
             raise FileNotFoundError(f'Test case {full_test_case_path} does not exist.')
 
     @property
-    def working_directories(self) -> List[Path]:
+    def working_directories(self) -> List[PurePath]:
         """
 
-        :return: list of absolute paths from the project directory to the directory containing the script.
+        :return: list of paths from the project directory to the directory containing the script.
         """
         test_path: PurePath = self.full_test_case_path
         if not self.is_test_case_dir:
@@ -73,9 +74,9 @@ class TestCasePath:
 
         # Create a list of full paths for every directory between the project_root and the directory containing the
         # script.
-        working_directories: [Path] = [self._project_root]
+        working_directories: [PurePath] = [self._project_root]
         for next_part in test_path.parts:
-            working_directories.append(Path(self._project_root / next_part).absolute())
+            working_directories.append(self._project_root / next_part)
         return working_directories
 
 
@@ -122,8 +123,6 @@ class TestCase(NamedTuple):
     A Test Case represents a full path to the test script.  The project root directory is used to derive paths from
     the project root to the script.  Those paths are used to determine the working directory to start each test to
     validate that a test script can be run from any directory between the project's root to the script.
-
-    NOTE: Sub-projects will have different project_roots than the_project(PROJECT_PATH).
     """
 
     # full_test_case_path can be a file or directory containing test cases
@@ -145,9 +144,6 @@ class TestCase(NamedTuple):
         This TestCase generator expects the test_case to be a fragment from the project root to the test script.
         The project_root is prepended to the test_case and provided as the 'TestCase.full_test_case_path'
         value. That path is checked to ensure that a file by that 'full_test_case_path' exits.
-
-        Note: the project_root could be different from the the_project root dir(PROJECT_PATH) for contained
-        sub-projects.
 
         :param test_case_path:
         :param test_types:
@@ -215,15 +211,7 @@ class TestCase(NamedTuple):
 ENV: Dict[str, str] = os.environ.copy()
 ENV.update({'PYTHONDONTWRITEBYTECODE': '-1'})
 
-TEST_CASE_PATHS: Tuple[TestCase, ...] = (
-    TestCase.gen_test_case(TestCasePath(PROJECT_PATH, PurePath('test_module0.py'))),
-    TestCase.gen_test_case(TestCasePath(PROJECT_PATH, PurePath('test_the_project_main_reusable_func.py'))),
-    TestCase.gen_test_case(TestCasePath(PROJECT_PATH, PurePath('run_the_project_main.py')), (TestType.PYTHON,)),
-)
-
-
-def get_group_tests(group: Group) -> Tuple[TestCase, ...]:
-    return tuple(tcp for tcp in TEST_CASE_PATHS if group == tcp.group)
+POpenArgs = NewType('POpenArgs', Union[bytes, str, Sequence[Union[bytes, str, PathLike]]])
 
 
 class RunningTestCase(NamedTuple):
@@ -279,17 +267,18 @@ def _run_pytest(test_type: TestType, work_directory: PurePath, test_case: TestCa
     return RunningTestCase(test_case.group, test_type, cwd_relative_to_test_case_project, process)
 
 
-POpenArgs = NewType('POpenArgs', Union[bytes, str, Sequence[Union[bytes, str, PathLike]]])
+def _get_group_tests(test_case_paths: Tuple[TestCase, ...], group: Group) -> Tuple[TestCase, ...]:
+    return tuple(tcp for tcp in test_case_paths if group == tcp.group)
 
 
-def _run_all_tests() -> None:
+def run_all_tests(test_cases: Tuple[TestCase, ...] = tuple()) -> None:
     running_test_cases: List[RunningTestCase] = []
     test_count: int = 0
     tests_passed: int = 0
 
     # Start all tests
     for group in Group:
-        for test_case in get_group_tests(group):
+        for test_case in _get_group_tests(test_cases, group):
             # ... over all test_case types
             for test_type in TestType:
                 if test_type not in test_case.test_types:
@@ -324,4 +313,17 @@ def _run_all_tests() -> None:
 
 
 if __name__ == '__main__':
-    _run_all_tests()
+    project_path: PurePath = Path(__file__).absolute().parent
+
+
+    def gen_test_case_path(test_case: str) -> TestCasePath:
+        return TestCasePath(project_path, PurePath(test_case))
+
+
+    all_test_cases: Tuple[TestCase, ...] = (
+        TestCase.gen_test_case(gen_test_case_path('test_module0.py')),
+        TestCase.gen_test_case(gen_test_case_path('test_the_project_main_reusable_func.py')),
+        TestCase.gen_test_case(gen_test_case_path('run_the_project_main.py'), (TestType.PYTHON,)),
+    )
+
+    run_all_tests(all_test_cases)
