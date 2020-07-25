@@ -44,10 +44,9 @@ class TestCasePath:
 
     def test_case_relative_to_project(self, path: PurePath) -> PurePath:
         if path == self._project_root:
-            test_case_relative_to_project = self._project_root.relative_to(path)
+            test_case_relative_to_project = self._project_root
         else:
-            test_case_relative_to_project = self._project_root.relative_to(path) / \
-                                            path.relative_to(self._project_root)
+            test_case_relative_to_project = self._project_root / path.relative_to(self._project_root)
         return test_case_relative_to_project
 
     @property
