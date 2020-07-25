@@ -51,7 +51,7 @@ class TestCasePath:
         return test_case_relative_to_project
 
     @property
-    def is_test_case_dir(self) -> bool:
+    def is_dir_test_case(self) -> bool:
         return self.full_test_case_path.is_dir()
 
     def check_test_case_path(self) -> None:
@@ -66,7 +66,7 @@ class TestCasePath:
         :return: list of paths from the project directory to the directory containing the script.
         """
         test_path: PurePath = self.full_test_case_path
-        if not self.is_test_case_dir:
+        if not self.is_dir_test_case:
             # The last 'part' of the path needs to be a directory, not the script.
             test_path: PurePath = self.full_test_case_path.parent
         # The path fragment between the project_root and the directory containing the script.
@@ -100,6 +100,18 @@ class TestType(Enum):
 
     def is_pytest(self) -> bool:
         return self in [TestType.PYTEST, TestType.PYTHON_PYTEST]
+
+    def python_command(self, is_script: bool) -> Optional[str]:
+        command: Optional[str] = None
+        if self.is_pytest():
+            if self == TestType.PYTEST:
+                command = 'pytest'
+            else:
+                command = 'python -B -m pytest'
+        elif is_script:
+            command = 'python -B'
+
+        return command
 
     @staticmethod
     def all_test_types() -> Tuple["TestType", ...]:
@@ -154,7 +166,7 @@ class TestCase(NamedTuple):
 
         """
 
-        if test_case_path.is_test_case_dir:
+        if test_case_path.is_dir_test_case:
             test_types = TestType.only_pytest_types(test_types)
 
         if pytest_filter and not TestType.is_only_pytest_types(test_types):
@@ -163,16 +175,9 @@ class TestCase(NamedTuple):
         return TestCase(test_case_path, test_types, pytest_filter, group)
 
     def python_command(self, test_type: TestType) -> Optional[str]:
-        command: Optional[str] = None
-        if test_type.is_pytest():
-            if test_type == TestType.PYTEST:
-                command = 'pytest'
-            else:
-                command = 'python -B -m pytest'
-            if self.pytest_filter:
-                command = f'{command} -k "{self.pytest_filter}"'
-        elif self._is_script():
-            command = 'python -B'
+        command = test_type.python_command(self._is_script)
+        if command and test_type.is_pytest() and self.pytest_filter:
+            command = f'{command} -k "{self.pytest_filter}"'
 
         return command
 
@@ -198,6 +203,7 @@ class TestCase(NamedTuple):
         """
         return self.test_case_path.working_directories
 
+    @property
     def _is_script(self) -> bool:
         """
         Determine if the test case is a script that is run (not a pytest).
@@ -205,7 +211,7 @@ class TestCase(NamedTuple):
         :return: True/False
         """
         return (self.test_case_path.full_test_case_path.stem.startswith('run_') and
-                not self.test_case_path.is_test_case_dir)
+                not self.test_case_path.is_dir_test_case)
 
 
 ENV: Dict[str, str] = os.environ.copy()
@@ -214,7 +220,7 @@ ENV.update({'PYTHONDONTWRITEBYTECODE': '-1'})
 POpenArgs = NewType('POpenArgs', Union[bytes, str, Sequence[Union[bytes, str, PathLike]]])
 
 
-class RunningTestCase(NamedTuple):
+class _RunningTestCase(NamedTuple):
     """
     Named tuple associated with a currently running test case.
     """
@@ -237,7 +243,7 @@ class RunningTestCase(NamedTuple):
         return f'{which_test_how} from {self.cwd}'
 
 
-def _run_pytest(test_type: TestType, work_directory: PurePath, test_case: TestCase) -> Optional[RunningTestCase]:
+def _run_pytest(test_type: TestType, work_directory: PurePath, test_case: TestCase) -> Optional[_RunningTestCase]:
     """
     Run a python script base on the test_type.
 
@@ -246,7 +252,7 @@ def _run_pytest(test_type: TestType, work_directory: PurePath, test_case: TestCa
     :param test_type: enum to determine if a pytest (or a python-pytest) or a regular runnable script
     :param work_directory: working directory from whence the script is run
     :param test_case: manage test case paths relative to project root and current working directory
-    :return: a RunningTestCase containing references to the running process(Popen object) and data associated with
+    :return: a _RunningTestCase containing reference to the running process(Popen object) and data associated with
     how the process was started
     """
 
@@ -264,7 +270,7 @@ def _run_pytest(test_type: TestType, work_directory: PurePath, test_case: TestCa
                          stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                          bufsize=1, universal_newlines=True, env=ENV)
 
-    return RunningTestCase(test_case.group, test_type, cwd_relative_to_test_case_project, process)
+    return _RunningTestCase(test_case.group, test_type, cwd_relative_to_test_case_project, process)
 
 
 def _get_group_tests(test_case_paths: Tuple[TestCase, ...], group: Group) -> Tuple[TestCase, ...]:
@@ -272,7 +278,7 @@ def _get_group_tests(test_case_paths: Tuple[TestCase, ...], group: Group) -> Tup
 
 
 def run_all_tests(test_cases: Tuple[TestCase, ...] = tuple()) -> None:
-    running_test_cases: List[RunningTestCase] = []
+    running_test_cases: List[_RunningTestCase] = []
     test_count: int = 0
     tests_passed: int = 0
 
@@ -285,7 +291,7 @@ def run_all_tests(test_cases: Tuple[TestCase, ...] = tuple()) -> None:
                     continue
                 # ... changing the work dir from the project root to directory containing script
                 for working_directory in test_case.working_directories:
-                    running_test_case: Optional[RunningTestCase] = _run_pytest(test_type, working_directory, test_case)
+                    running_test_case = _run_pytest(test_type, working_directory, test_case)
                     if running_test_case:
                         running_test_cases.append(running_test_case)
 
