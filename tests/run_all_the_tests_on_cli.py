@@ -14,6 +14,71 @@ from typing import List, Union, Sequence, Dict, NamedTuple, NewType, Optional, T
 PROJECT_PATH: Path = Path(__file__).absolute().parent.parent
 
 
+class TestCasePath:
+
+    def __init__(self, project_root: PurePath, test_case: PurePath):
+        self._project_root: PurePath = project_root
+        self._test_case: PurePath = test_case
+        self.check_test_case_path()
+
+    @property
+    def project_root(self) -> PurePath:
+        return self._project_root
+
+    @property
+    def test_case(self) -> PurePath:
+        return self._test_case
+
+    @property
+    def full_test_case_path(self) -> Path:
+        project_root: Path = Path(self._project_root).absolute()
+        full_test_case_path: Path = (project_root / self._test_case)
+        return full_test_case_path
+
+    @property
+    def test_case_relative_to_project_root(self) -> PurePath:
+        return self.test_case_relative_to(self.project_root)
+
+    def test_case_relative_to(self, path: PurePath) -> PurePath:
+        return self.full_test_case_path.relative_to(path)
+
+    def test_case_relative_to_project(self, path: PurePath) -> PurePath:
+        if path == self._project_root:
+            test_case_relative_to_project = self._project_root
+        else:
+            test_case_relative_to_project = self._project_root / path.relative_to(self._project_root)
+        return test_case_relative_to_project
+
+    @property
+    def is_test_case_dir(self) -> bool:
+        return self.full_test_case_path.is_dir()
+
+    def check_test_case_path(self) -> None:
+        full_test_case_path: Path = self.full_test_case_path
+        if not full_test_case_path.exists():
+            raise FileNotFoundError(f'Test case {full_test_case_path} does not exist.')
+
+    @property
+    def working_directories(self) -> List[Path]:
+        """
+
+        :return: list of absolute paths from the project directory to the directory containing the script.
+        """
+        test_path: PurePath = self.full_test_case_path
+        if not self.is_test_case_dir:
+            # The last 'part' of the path needs to be a directory, not the script.
+            test_path: PurePath = self.full_test_case_path.parent
+        # The path fragment between the project_root and the directory containing the script.
+        test_path: PurePath = test_path.relative_to(self._project_root)
+
+        # Create a list of full paths for every directory between the project_root and the directory containing the
+        # script.
+        working_directories: [Path] = [self._project_root]
+        for next_part in test_path.parts:
+            working_directories.append(Path(self._project_root / next_part).absolute())
+        return working_directories
+
+
 class Group(IntEnum):
     ONE = auto()
     TWO = auto()
@@ -62,19 +127,20 @@ class TestCase(NamedTuple):
     """
 
     # full_test_case_path can be a file or directory containing test cases
-    full_test_case_path: Path
+    test_case_path: TestCasePath
     test_types: Tuple[TestType]
-    project_root: Path
     pytest_filter: str
     group: Group
 
     def __str__(self):
-        return f'{self.project_root}::{self.full_test_case_path.relative_to(self.project_root)}'
+        return f'{self.test_case_path.project_root}::' \
+               f'{self.test_case_path.test_case_relative_to_project_root}'
 
     @classmethod
-    def gen_test_case(cls, test_case: Path, test_types: Tuple[TestType, ...] = TestType.all_test_types(),
-                      project_root: Path = PROJECT_PATH, pytest_filter: str = None, group: Group = Group.ONE) -> \
-            "TestCase":
+    def gen_test_case(cls, test_case_path: TestCasePath,
+                      test_types: Tuple[TestType, ...] = TestType.all_test_types(),
+                      pytest_filter: str = None,
+                      group: Group = Group.ONE) -> "TestCase":
         """
         This TestCase generator expects the test_case to be a fragment from the project root to the test script.
         The project_root is prepended to the test_case and provided as the 'TestCase.full_test_case_path'
@@ -83,27 +149,22 @@ class TestCase(NamedTuple):
         Note: the project_root could be different from the the_project root dir(PROJECT_PATH) for contained
         sub-projects.
 
-        :param test_case:
+        :param test_case_path:
         :param test_types:
-        :param project_root:
         :param pytest_filter: pytest -k string
         :param group:
 
         :return: test case paths object
 
         """
-        project_root: Path = project_root.absolute()
-        full_test_case_path: Path = (project_root / test_case).absolute()
-        if not full_test_case_path.exists():
-            raise FileNotFoundError(f'Test case {full_test_case_path} does not exist.')
 
-        if full_test_case_path.is_dir():
+        if test_case_path.is_test_case_dir:
             test_types = TestType.only_pytest_types(test_types)
 
         if pytest_filter and not TestType.is_only_pytest_types(test_types):
             raise RuntimeError(f'filter {pytest_filter} may only be used for pytests.')
 
-        return TestCase(full_test_case_path, test_types, project_root, pytest_filter, group)
+        return TestCase(test_case_path, test_types, pytest_filter, group)
 
     def python_command(self, test_type: TestType) -> Optional[str]:
         command: Optional[str] = None
@@ -119,10 +180,10 @@ class TestCase(NamedTuple):
 
         return command
 
-    def test_case_relative_to_cwd(self, working_directory: Path) -> Path:
-        return self.full_test_case_path.relative_to(working_directory)
+    def test_case_relative_to_cwd(self, working_directory: PurePath) -> PurePath:
+        return self.test_case_path.test_case_relative_to(working_directory)
 
-    def cwd_relative_to_project(self, working_directory: Path) -> Path:
+    def cwd_relative_to_project(self, working_directory: PurePath) -> PurePath:
         """
         This method may seem odd, but submodules will have a different project roots
         than the top-level project root.
@@ -130,32 +191,16 @@ class TestCase(NamedTuple):
         :param working_directory: absolute path to cwd
         :return: working directory relative to the test case's project_root
         """
-        if working_directory == self.project_root:
-            work_directory = self.project_root.relative_to(PROJECT_PATH)
-        else:
-            work_directory = self.project_root.relative_to(PROJECT_PATH) / \
-                             working_directory.relative_to(self.project_root)
-        return work_directory
+
+        return self.test_case_path.test_case_relative_to_project(working_directory)
 
     @property
-    def working_directories(self) -> List[Path]:
+    def working_directories(self) -> List[PurePath]:
         """
 
-        :return: list of absolute paths from the project directory to the directory containing the script.
+        :return: list of paths from the project directory to the directory containing the script.
         """
-        test_path = self.full_test_case_path
-        if not self.full_test_case_path.is_dir():
-            # The last 'part' of the path needs to be a directory, not the script.
-            test_path = self.full_test_case_path.parent
-        # The path fragment between the project_root and the directory containing the script.
-        test_path: PurePath = test_path.relative_to(self.project_root)
-
-        # Create a list of full paths for every directory between the project_root and the directory containing the
-        # script.
-        working_directories: [Path] = [self.project_root]
-        for next_part in test_path.parts:
-            working_directories.append(self.project_root / next_part)
-        return working_directories
+        return self.test_case_path.working_directories
 
     def _is_script(self) -> bool:
         """
@@ -163,23 +208,25 @@ class TestCase(NamedTuple):
         A script that is simply run by Python is a file that begins with 'run_' and isn't a directory)
         :return: True/False
         """
-        return (self.full_test_case_path.stem.startswith('run_') and
-                not self.full_test_case_path.is_dir())
+        return (self.test_case_path.full_test_case_path.stem.startswith('run_') and
+                not self.test_case_path.is_test_case_dir)
 
 
 ENV: Dict[str, str] = os.environ.copy()
 ENV.update({'PYTHONDONTWRITEBYTECODE': '-1'})
 
 TEST_CASE_PATHS: Tuple[TestCase, ...] = (
-    TestCase.gen_test_case(Path('tests/test_can_test_case_import.py'), (TestType.PYTEST,)),
-    TestCase.gen_test_case(Path('tests/test_utils.py')),
-    TestCase.gen_test_case(Path('tests/test_file_utils.py'), group=Group.TWO),
-    TestCase.gen_test_case(Path('tests/test_module0.py')),
-    TestCase.gen_test_case(Path('tests/test_package.py')),
-    TestCase.gen_test_case(Path('tests/test_the_project_main_reusable_func.py')),
-    TestCase.gen_test_case(Path('tests'), pytest_filter='(not test_can_test_case_import_from_root_dir)',
+    TestCase.gen_test_case(TestCasePath(PROJECT_PATH, PurePath('tests/test_can_test_case_import.py')),
+                           (TestType.PYTEST,)),
+    TestCase.gen_test_case(TestCasePath(PROJECT_PATH, PurePath('tests/test_utils.py'))),
+    TestCase.gen_test_case(TestCasePath(PROJECT_PATH, PurePath('tests/test_file_utils.py')), group=Group.TWO),
+    TestCase.gen_test_case(TestCasePath(PROJECT_PATH, PurePath('tests/test_module0.py'))),
+    TestCase.gen_test_case(TestCasePath(PROJECT_PATH, PurePath('tests/test_package.py'))),
+    TestCase.gen_test_case(TestCasePath(PROJECT_PATH, PurePath('tests/test_the_project_main_reusable_func.py'))),
+    TestCase.gen_test_case(TestCasePath(PROJECT_PATH, PurePath('tests')),
+                           pytest_filter='(not test_can_test_case_import_from_root_dir)',
                            group=Group.THREE),
-    TestCase.gen_test_case(Path('src/run_the_project_main.py'), (TestType.PYTHON,)),
+    TestCase.gen_test_case(TestCasePath(PROJECT_PATH, PurePath('src/run_the_project_main.py')), (TestType.PYTHON,)),
 )
 
 
@@ -193,10 +240,10 @@ class RunningTestCase(NamedTuple):
     """
     group: Group
     test_type: TestType
-    cwd: Path
+    cwd: PurePath
     process: Optional[subprocess.Popen]
 
-    def __str__(self):
+    def __str__(self) -> str:
         args: POpenArgs = self.process.args
         which_test_how: str = f'unknown: {args[-1]}'
         if isinstance(args, list):
@@ -210,7 +257,7 @@ class RunningTestCase(NamedTuple):
         return f'{which_test_how} from {self.cwd}'
 
 
-def _run_pytest(test_type: TestType, work_directory: Path, test_case: TestCase) -> Optional[RunningTestCase]:
+def _run_pytest(test_type: TestType, work_directory: PurePath, test_case: TestCase) -> Optional[RunningTestCase]:
     """
     Run a python script base on the test_type.
 
@@ -225,15 +272,15 @@ def _run_pytest(test_type: TestType, work_directory: Path, test_case: TestCase) 
 
     command: str = test_case.python_command(test_type)
     if not command:
-        return
+        return None
 
-    cwd_relative_to_test_case_project: Path = test_case.cwd_relative_to_project(work_directory)
-    test_case_relative_to_cwd = test_case.test_case_relative_to_cwd(work_directory)
+    cwd_relative_to_test_case_project: PurePath = test_case.cwd_relative_to_project(work_directory)
+    test_case_relative_to_cwd: PurePath = test_case.test_case_relative_to_cwd(work_directory)
     print(f'Starting: {command} {test_case_relative_to_cwd} from {cwd_relative_to_test_case_project}')
 
     command = f'{command} {test_case_relative_to_cwd}'
     process: subprocess.Popen = \
-        subprocess.Popen(shlex.split(command), cwd=str(work_directory),
+        subprocess.Popen(shlex.split(command), cwd=str(Path(work_directory).absolute()),
                          stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                          bufsize=1, universal_newlines=True, env=ENV)
 
@@ -275,8 +322,8 @@ def _run_all_tests() -> None:
             # pylint: enable=expression-not-assigned
 
             tests_passed += 1
-        else:
-            running_test_cases.clear()
+
+        running_test_cases.clear()
 
     if tests_passed == test_count:
         print(f'\nAll {test_count} tests passed!')
