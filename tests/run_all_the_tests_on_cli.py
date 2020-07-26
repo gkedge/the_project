@@ -148,19 +148,21 @@ class TestCase(NamedTuple):
                f'{self.test_case_path.test_case_relative_to_project_root}'
 
     @classmethod
-    def gen_test_case(cls, test_case_path: TestCasePath,
-                      test_types: Tuple[TestType, ...] = TestType.all_test_types(),
+    def gen_test_case(cls,
+                      test_case_path: TestCasePath,
+                      group: Group = Group.ONE,
                       pytest_filter: str = None,
-                      group: Group = Group.ONE) -> "TestCase":
+                      test_types: Tuple[TestType, ...] = TestType.all_test_types(),
+                      ) -> "TestCase":
         """
         This TestCase generator expects the test_case to be a fragment from the project root to the test script.
         The project_root is prepended to the test_case and provided as the 'TestCase.full_test_case_path'
         value. That path is checked to ensure that a file by that 'full_test_case_path' exits.
 
         :param test_case_path:
-        :param test_types:
-        :param pytest_filter: pytest -k string
         :param group:
+        :param pytest_filter: pytest -k string
+        :param test_types:
 
         :return: test case paths object
 
@@ -328,16 +330,15 @@ if __name__ == '__main__':
 
     all_test_cases: Tuple[TestCase, ...] = (
         TestCase.gen_test_case(gen_test_case_path('tests/test_can_test_case_import.py'),
-                               (TestType.PYTEST,)),
+                               test_types=(TestType.PYTEST,)),
         TestCase.gen_test_case(gen_test_case_path('tests/test_utils.py')),
-        TestCase.gen_test_case(gen_test_case_path('tests/test_file_utils.py'), group=Group.TWO),
+        TestCase.gen_test_case(gen_test_case_path('tests/test_file_utils.py'), Group.TWO),
         TestCase.gen_test_case(gen_test_case_path('tests/test_module0.py')),
         TestCase.gen_test_case(gen_test_case_path('tests/test_package.py')),
         TestCase.gen_test_case(gen_test_case_path('tests/test_the_project_main_reusable_func.py')),
-        TestCase.gen_test_case(gen_test_case_path('tests'),
-                               pytest_filter='(not test_can_test_case_import_from_root_dir)',
-                               group=Group.THREE),
-        TestCase.gen_test_case(gen_test_case_path('src/run_the_project_main.py'), (TestType.PYTHON,)),
+        TestCase.gen_test_case(gen_test_case_path('tests'), Group.THREE,
+                               pytest_filter='(not test_can_test_case_import_from_root_dir)'),
+        TestCase.gen_test_case(gen_test_case_path('src/run_the_project_main.py'), test_types=(TestType.PYTHON,)),
     )
 
     run_all_tests(all_test_cases)
