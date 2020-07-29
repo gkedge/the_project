@@ -7,7 +7,7 @@ verify_ssl = true
 pytest = "==5.*"
 pylint = "*"
 coverage = "*"
-run-all-the-tests = ">=0.1.4"
+run-all-the-tests = ">=0.1.5"
 
 [packages]
 # pytest (or one of its dependencies) is bringing in a version of `atomicwrites` that our mirror
