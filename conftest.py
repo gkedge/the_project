@@ -13,11 +13,11 @@ assert str(PROJECT_PATH / 'src') not in sys.path
 sys.path.append(str(PROJECT_PATH / 'src'))
 print_syspath(sort=False)
 
-# pylint: disable=import-error
+# pylint: disable=import-error,wrong-import-position
 from the_project import Module0
 
 
-# pylint: enable=import-error
+# pylint: enable=import-error,wrong-import-position
 
 
 @pytest.fixture

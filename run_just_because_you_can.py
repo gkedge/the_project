@@ -24,13 +24,13 @@ def _get_the_project_answer() -> str:
     the_project_str = str(src.the_project)
     the_project_answer: str = re.sub(r"from '.+the_project", "from '.../the_project",
                                      the_project_str)
-    the_project_answer = the_project_answer + f"\n\t'the_package' is a package initializer!"
+    the_project_answer = f"{the_project_answer}\n\t'the_package' is a package initializer!"
     return the_project_answer
 
 
 def _import_with_src_package():
     print("Referencing 'src.the_project.")
-    print(f"Q: What are the project-related members of 'sys.path'?")
+    print("Q: What are the project-related members of 'sys.path'?")
     print(f"A: {_get_sys_path_answer()}\n")
 
     # 'src' has no __init__.py. AND it NEVER should! Why does these imports work?
