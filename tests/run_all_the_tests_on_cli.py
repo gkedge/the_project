@@ -74,7 +74,7 @@ class TestCasePath:
 
         # Create a list of full paths for every directory between the project_root and the directory containing the
         # script.
-        working_directories: [PurePath] = [self._project_root]
+        working_directories: List[PurePath] = [self._project_root]
         for next_part in test_path.parts:
             working_directories.append(self._project_root / next_part)
         return working_directories

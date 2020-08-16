@@ -1,11 +1,13 @@
 [FORMAT]
+max-line-length = 100
 
 disable:
     import-error,
     wrong-import-position,
     missing-module-docstring,
+    missing-function-docstring,
     missing-class-docstring,
-    missing-function-docstring
-
-# Maximum number of characters on a single line.
-max-line-length = 120
+    missing-function-docstring,
+    bad-continuation,
+    bad-whitespace
+    no-self-use,
