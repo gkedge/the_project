@@ -5,14 +5,20 @@ verify_ssl = true
 
 [dev-packages]
 pytest = "==5.4.1"
+black = {extras = ["d"], version = "==19.10b0"}
+flake8 = "==3.8.3"
+mypy = "==0.782"
+run-all-the-tests = "==0.1.16"
 
 [packages]
 # pytest (or one of its dependencies) is bringing in a version of `atomicwrites` that our mirror lacks. I am forcing
 # the most current version that I know exists. Obviously, this has the risk of atomicwrites becoming out-of-sync with
 # pytest and its dependencies, but 1.3.0 currently does work.
 atomicwrites = ">=1.3.0"
-runtime-syspath = "==0.1.10"
-pytest = "*"
+runtime-syspath = "==0.1.12"
+colorama = "==0.4.3"
+wcwidth = "==0.2.5"
+
 
 [requires]
 python_version = "3.7"
