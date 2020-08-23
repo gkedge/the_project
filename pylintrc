@@ -3,7 +3,8 @@ max-line-length = 100
 
 disable:
     bad-continuation,
+    bad-whitespace,
     missing-module-docstring,
     missing-function-docstring,
     missing-class-docstring,
-    no-self-use,
+    no-self-use
