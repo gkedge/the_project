@@ -6,11 +6,11 @@ verify_ssl = true
 [dev-packages]
 black = { extras = ["d"], version = "==19.10b0" }
 coverage = ">=5.2.1"
-flake8 = "==3.8.3"
+flake8 = ">=3.8.3"
 mypy = "==0.782"
 pylint = ">=2.5.3"
-pytest = "==5.*"
-run-all-the-tests = ">=0.1.*"
+pytest = ">=5.*"
+run-all-the-tests = ">=0.1.16"
 
 [packages]
 # pytest (or one of its dependencies) is bringing in a version of `atomicwrites` that our mirror lacks. I am forcing
