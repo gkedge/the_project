@@ -5,7 +5,9 @@ disable:
     wrong-import-position,
     missing-module-docstring,
     missing-class-docstring,
-    missing-function-docstring
+    missing-function-docstring,
+    bad-continuation,
+    bad-whitespace
 
 # Maximum number of characters on a single line.
 max-line-length = 120
