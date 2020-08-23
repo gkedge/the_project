@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="PylintConfigService">
-    <option name="scanBeforeCheckin" value="false" />
+    <option name="customPylintPath" value="$USER_HOME$/.local/share/virtualenvs/the_project-Ksf4cJCC/bin/pylint" />
   </component>
 </project>
