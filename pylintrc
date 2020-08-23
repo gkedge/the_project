@@ -2,12 +2,12 @@
 max-line-length = 100
 
 disable:
+    bad-continuation,
+    bad-whitespace,
     import-error,
-    wrong-import-position,
     missing-module-docstring,
     missing-function-docstring,
     missing-class-docstring,
     missing-function-docstring,
-    bad-continuation,
-    bad-whitespace
     no-self-use,
+    wrong-import-position,
