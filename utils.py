@@ -1,2 +1,2 @@
 def util0() -> str:
-    return 'utils.py:util0'
+    return "utils.py:util0"
