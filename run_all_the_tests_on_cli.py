@@ -8,7 +8,7 @@ from typing import Tuple
 
 from run_all_the_tests import TestCase, TestCasePath, run_all_tests
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     project_path: PurePath = Path(__file__).absolute().parent
 
 
