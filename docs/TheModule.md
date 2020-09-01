@@ -24,7 +24,7 @@ usages of a change. \[demo Module0 name refactor]
 >
 > That the current working directory is the same location as the script
 > being executed is a rare case of serendipity since this directory
-> structure for Python development is not recommended.
+> structure is not recommended.
 
 To better illustrate what is being added to `sys.path`, tests will print
 out the `sys.path` contents at the start of execution. \[open
@@ -46,16 +46,15 @@ Developers can run pytests in two different ways:
 Their primary difference lies with the fact that calling via `python -p
 pytest` **will** add the current working directory to `sys.path` in
 addition to `test_script.py`'s parent directory. Due to the the nature
-of using `pytest` this way, calling `pytest` directly will become
-unusable over time as code becomes reliant upon the inclusion of the
-working directory. This be sad for all IDE test runner goodness.
+of running `pytest` as a python module, calling `pytest` directly can
+become unusable over time as code becomes reliant upon the inclusion of
+the working directory. This be sad for all IDE test runner goodness.
 
 For the case of [The Module] demo with both module and test being in the
 same directory, there is no difference. But, I want to make sure through
 each demo that follows, both ways to start a `pytest` work. So, all the
-tests that are added for these demos will be run sequentially using both
-command patterns via \[test_all_the_tests_on_cli.py] \[run
-`test_all_the_tests_on_cli.py`]
+tests that are added for these demos will be run using both command
+patterns via run_all_the_tests_on_cli.py.
 
 > Q: If relying upon dynamic augmentation of `sys.path` is eradicated,
 > can't we rely on `*.ini` files? E.g.: `pytest.ini`
