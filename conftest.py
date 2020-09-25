@@ -1,10 +1,23 @@
 import sys
 from pathlib import Path
+from typing import Union
 
-import pytest
-from runtime_syspath import print_syspath
+from _pytest.config import ExitCode
+from _pytest.main import Session
+from runtime_syspath import print_syspath, syspath_sleuth
 
 sys.dont_write_bytecode = True
+
+
+def pytest_sessionstart(session: Session):
+    syspath_sleuth.inject_sleuth()
+
+
+def pytest_sessionfinish(session: Session, exitstatus: Union[int, ExitCode]):
+    syspath_sleuth.uninstall_sleuth()
+
+
+import pytest
 
 print_syspath(sort=False)
 
