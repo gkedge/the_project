@@ -5,10 +5,11 @@ from pathlib import Path
 
 from runtime_syspath import print_syspath
 
+sys.dont_write_bytecode = True
+
 if os.getenv('SYSPATH_SLEUTH_KILL') is None:
     from runtime_syspath import syspath_sleuth
 
-    sys.dont_write_bytecode = True
     syspath_sleuth.inject_sleuth()
 
 
