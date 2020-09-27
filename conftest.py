@@ -1,21 +1,22 @@
+import atexit
+import os
 import sys
 from pathlib import Path
-from typing import Union
 
-from _pytest.config import ExitCode
-from _pytest.main import Session
-from runtime_syspath import print_syspath, syspath_sleuth
+from runtime_syspath import print_syspath
 
-sys.dont_write_bytecode = True
+if os.getenv('SYSPATH_SLEUTH_KILL') is None:
+    from runtime_syspath import syspath_sleuth
 
-
-def pytest_sessionstart(session: Session):
+    sys.dont_write_bytecode = True
     syspath_sleuth.inject_sleuth()
 
 
-def pytest_sessionfinish(session: Session, exitstatus: Union[int, ExitCode]):
-    syspath_sleuth.uninstall_sleuth()
+    def uninstall_syspath_sleuth():
+        syspath_sleuth.uninstall_sleuth()
 
+
+    atexit.register(uninstall_syspath_sleuth)
 
 import pytest
 
