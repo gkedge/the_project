@@ -15,7 +15,7 @@ def main_reusable_func() -> str:
     :return: a string indicating what could be run from th e
     """
     the_prog_mod0 = the_project.Module0()
-    return f'Exercise {the_prog_mod0.func0()} on class {the_prog_mod0}.'
+    return f"Exercise {the_prog_mod0.func0()} on class {the_prog_mod0}."
 
 
 if __name__ == "__main__":

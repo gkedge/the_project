@@ -7,9 +7,11 @@ from common import mkdir_p
 
 def test_mkdir_p(request: SubRequest):
     def finalize_test():
-        Path('tmper').rmdir()
+        tempest = Path("tempest")
+        if tempest.exists:
+            tempest.rmdir()
 
     request.addfinalizer(finalize_test)
-    mkdir_p('tmper')
+    mkdir_p("tempest")
 
-    assert Path('tmper').exists()
+    assert Path("tempest").exists()

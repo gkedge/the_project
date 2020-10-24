@@ -1,25 +1,13 @@
-import atexit
-import os
 import sys
 from pathlib import Path
 
-from runtime_syspath import print_syspath
+import pytest
+from runtime_syspath import print_syspath, syspath_sleuth
 
 sys.dont_write_bytecode = True
 
-if os.getenv('SYSPATH_SLEUTH_KILL') is None:
-    from runtime_syspath import syspath_sleuth
-
-    syspath_sleuth.inject_sleuth()
-
-
-    def uninstall_syspath_sleuth():
-        syspath_sleuth.uninstall_sleuth()
-
-
-    atexit.register(uninstall_syspath_sleuth)
-
-import pytest
+if syspath_sleuth.is_install_on_import():
+    print("SysPathSleuth activated!")
 
 print_syspath(sort=False)
 
@@ -29,6 +17,13 @@ sys.path.append(str(PROJECT_PATH / "src"))
 print_syspath(sort=False)
 
 from the_project import Module0
+
+
+# def persist_path_at_exit():
+#     persist_syspath(force_pth_dir_creation=True)
+#
+#
+# atexit.register(persist_path_at_exit)
 
 
 @pytest.fixture

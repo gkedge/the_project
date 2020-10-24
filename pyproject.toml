@@ -42,31 +42,31 @@ norecursedirs = """
 
 [tool.black]
 line-length = 100
-target-version = ["py37"]
+target-version = ['py37', 'py38']
 
 include = '\.pyi?$' # Default
 exclude = '''
-# Directory exclusions
-/(,
-  # Defaults:
-    \.eggs
-  | \.git
-  | \.hg
-  | \.mypy_cache
-  | \.tox
-  | \.venv
-  | _build
-  | buck-out
-  | build
-  | dist
-  # Add additional patterns here:
-  | \.idea
-)/
-| # File exclusions
-/(
-  # Add additional file patterns here:
-  # my_file\.py
-)
+    # Directory exclusions
+    /(,
+      # Defaults:
+      \.eggs
+      | \.git
+      | \.hg
+      | \.mypy_cache
+      | \.tox
+      | \.venv
+      | _build
+      | buck-out
+      | build
+      | dist
+      # Add additional patterns here:
+      | \.idea
+    )/
+    | # File exclusions
+#    /(
+      # Add additional file patterns here:
+      # my_file\.py
+#    )
 '''
 
 [tool.isort] # https://github.com/timothycrosley/isort/wiki/isort-Settings#full-reference-of-isort-settings
